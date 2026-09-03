@@ -57,6 +57,7 @@
     width: 100%;
     padding-bottom: var(--options-padding-bottom);
     height: var(--options-height);
+    z-index: 10;
 }
  /* .options-container {
     position: fixed;
@@ -74,3 +75,13 @@
     padding-top: calc(var(--options-height) + var(--options-padding-bottom));
 }
 
+.thumbnail-images {
+    position: relative;
+    display: inline-flex;
+}
+
+.play-button {
+    position: absolute;
+    left: 0;
+    color: aliceblue;
+}

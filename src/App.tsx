@@ -3,7 +3,7 @@ import './App.css'
 import './thumnails.css'
 import ThumbnailCard from './thumbnail'
 import type {MapName} from './thumbnail'
-import thumbnail_data from './assets/mapping.json'
+import thumbnail_data from './assets/mappings2.json'
 
 
 const originalThumbnailData = Object.values(thumbnail_data)
