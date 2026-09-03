@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Data
-public/react_test_dataset
+public/
