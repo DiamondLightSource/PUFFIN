@@ -85,3 +85,19 @@
     left: 0;
     color: aliceblue;
 }
+
+.clash-warning {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.warning-label {
+    padding-right: 3px;
+    padding-bottom: 3px;
+}
+
+.clash-warning-label {
+    color: 	#bb2124;
+    line-height: 1;
+}

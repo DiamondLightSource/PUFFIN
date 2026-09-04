@@ -13,7 +13,7 @@ const thumbnailData = originalThumbnailData.map((thumbnail) => ({
 }))
 
 
-type MapLabels = "Event" | "2FoFc" | "FoFc" | "Overlay"
+type MapLabels = "Event" | "2FoFc" | "FoFc" | "Overlay" | "Clash or CC"
 export type DecisionLabels = "Yes" | "No" | "Review"
 
 interface mapFile {
@@ -25,7 +25,8 @@ const mapFileNames: mapFile[] = [
   {"label": "Event", "mapName": "event_thumbnail"}, 
   {"label": "2FoFc", "mapName": "mtz_thumbnail"}, 
   {"label": "FoFc", "mapName": "fofc_thumbnail"}, 
-  {"label": "Overlay", "mapName": "overlay_thumbnail"}
+  {"label": "Overlay", "mapName": "overlay_thumbnail"},
+  {"label": "Clash or CC", "mapName": "clash_thumbnail"}
 ]
 
 export type SiteID = number | string
@@ -123,6 +124,7 @@ export default function MyApp() {
             onClick={() => {
               setMapName(mapName.mapName)
               setActiveMapButton(mapName.mapName)
+              console.log(mapName)
             }}>{mapName.label}</button>
           ))}
         </div>
