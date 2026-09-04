@@ -9,12 +9,14 @@ export interface Thumbnail {
     r_work: number; 
     analysed_resolution: number;
     event_thumbnail: string;
-    event_gif: string;
+    event_gif: string | null;
     fofc_thumbnail: string;
-    fofc_gif: string;
+    fofc_gif: string | null;
     mtz_thumbnail: string;
-    mtz_gif: string;
+    mtz_gif: string | null;
     overlay_thumbnail: string;
-    overlay_gif: string;
+    overlay_gif: string | null;
+    clash_thumbnail: string | null;
+    clash_gif: string | null;
     id: string;
 }
