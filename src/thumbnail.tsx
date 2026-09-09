@@ -1,7 +1,7 @@
 // import thumbnail_data from './assets/mapping.json'
 import { useState, useEffect } from 'react'
 import type { Thumbnail } from "./types";
-import type {SiteID, DecisionLabels} from "./App";
+import type {SiteID, DecisionLabels, ThumbnailActivityLabels} from "./App";
 
 
 interface ThumbnailProps {
@@ -10,6 +10,7 @@ interface ThumbnailProps {
   siteID: SiteID;
   activeThumbnails: string[];
   setActiveThumbnails: React.Dispatch<React.SetStateAction<string[]>>;
+  activeActivityButton: ThumbnailActivityLabels;
   decision: Decision;
   decisionButton: DecisionLabels | "All"
 }
@@ -23,10 +24,10 @@ interface Decision {
   
 
 export type MapName = "event_thumbnail" | "mtz_thumbnail" | "fofc_thumbnail" | "overlay_thumbnail" | "clash_thumbnail";
-type MapGif = "event_gif" | "mtz_gif" | "fofc_gif" | "overlay_gif" | "clash_gif"
+type MapGif = "event_gif" | "mtz_gif" | "fofc_gif" | "overlay_gif" | "clash_gif" | "event_contour_thumbnail" | "mtz_contour_thumbnail" | "no_gif"
 
 
-function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setActiveThumbnails, decisionButton, decision} : ThumbnailProps){
+function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setActiveThumbnails, activeActivityButton, decisionButton, decision} : ThumbnailProps){
 
   const toggleThumbnail = (id: string) => {
     setActiveThumbnails(previous => {
@@ -37,17 +38,34 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
     });
   };
 
+
+// if (siteID === "All" && decisionButton === "All") {
+//     title = "Thumbnails!"
+//   } else if (decisionButton !== "All") {
+//     title = `Reviewed - ${decisionButton}`;
+//   } else {
+//     title = `Site ${siteID}`;
+//   }
+
   const activeGif : MapGif = 
-    mapName === "mtz_thumbnail"
+    mapName === "mtz_thumbnail" && activeActivityButton === "Rock"
     ? "mtz_gif"
-    : mapName === "fofc_thumbnail"
+    : mapName === "mtz_thumbnail" && activeActivityButton === "Contour"
+    ? "mtz_contour_thumbnail"
+    : mapName === "fofc_thumbnail" && activeActivityButton === "Rock"
     ? "fofc_gif"
-    : mapName === "overlay_thumbnail"
+    : mapName === "overlay_thumbnail" && activeActivityButton === "Rock"
     ? "overlay_gif"
-    : mapName === "clash_thumbnail"
+    : mapName === "clash_thumbnail" && activeActivityButton === "Rock"
     ? "clash_gif"
-    : "event_gif";
+    : mapName === "event_thumbnail" && activeActivityButton === "Contour"
+    ? "event_contour_thumbnail"
+    : mapName === "event_thumbnail" && activeActivityButton === "Rock"
+    ? "event_gif"
+    : "no_gif";
   
+
+
 
     return thumbnailData
     .filter(thumbnail => siteID === "All" || thumbnail.site_idx === siteID)
