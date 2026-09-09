@@ -15,6 +15,8 @@ const thumbnailData = originalThumbnailData.map((thumbnail) => ({
 
 type MapLabels = "Event" | "2FoFc" | "FoFc" | "Overlay" | "Clash or CC"
 export type DecisionLabels = "Yes" | "No" | "Review"
+export type ThumbnailActivityLabels = "Rock" | "Contour"
+
 
 interface mapFile {
   mapName: MapName,
@@ -36,6 +38,7 @@ export type SiteID = number | string
 const siteData = thumbnailData.map(item => item.site_idx)
 const siteList: SiteID[] = [... new Set(siteData)]
 const buttonList: DecisionLabels[] = ["Yes", "No", "Review"]
+const thumbnailActivityList: ThumbnailActivityLabels[] = ["Rock", "Contour"]
 
 
 
@@ -50,6 +53,7 @@ export default function MyApp() {
   const [siteID, setSiteID] = useState<SiteID>("All")
   const [activeIDButton, setActiveIDButton] = useState<SiteID>("All")
   const [activeMapButton, setActiveMapButton] = useState<MapName>("event_thumbnail")
+  const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Rock")
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
   const [decisionButton, setDecisionButton] = useState<DecisionLabels | "All">("All")
@@ -84,6 +88,7 @@ export default function MyApp() {
     downloadDecisionJSON();
   }
 
+
   if (siteID === "All" && decisionButton === "All") {
     title = "Thumbnails!"
   } else if (decisionButton !== "All") {
@@ -91,10 +96,6 @@ export default function MyApp() {
   } else {
     title = `Site ${siteID}`;
   }
-
-  console.log("decisionButton:", decisionButton);
-  console.log("decision:", decision);
-  console.log("activeThumbnails:", activeThumbnails);
 
   const downloadDecisionJSON = () => {
     const blob = new Blob(
@@ -115,18 +116,32 @@ export default function MyApp() {
   return (
     <div>
       <div className='top-container'>
-        <div className='maps-container'>
-          <h3>Maps</h3>
-          {mapFileNames.map(mapName => (
-            <button 
-            key={mapName.label}
-            className={`main-button ${activeMapButton === mapName.mapName ? "active" : ""}`} type="button" 
-            onClick={() => {
-              setMapName(mapName.mapName)
-              setActiveMapButton(mapName.mapName)
-              console.log(mapName)
-            }}>{mapName.label}</button>
-          ))}
+        <div className='controls-container'>
+          <div className='maps-container'>
+            <h3>Maps</h3>
+            {mapFileNames.map(mapName => (
+              <button 
+              key={mapName.label}
+              className={`main-button ${activeMapButton === mapName.mapName ? "active" : ""}`} type="button" 
+              onClick={() => {
+                setMapName(mapName.mapName)
+                setActiveMapButton(mapName.mapName)
+              }}>{mapName.label}</button>
+            ))}
+          </div>
+          <div>
+            <h3>Action</h3>
+            {thumbnailActivityList.map(activityName => (
+              <button
+              key={activityName}
+              className={`main-button ${activeActivityButton === activityName ? "active" : ""}`} type="button" 
+              onClick={() => {
+                setActiveActivityButton(activityName)
+              }}
+              >{activityName}</button>
+            ))}
+            
+          </div>
         </div>
         <div className='decision-container'>
           <h3>Decision</h3>  
@@ -193,6 +208,7 @@ export default function MyApp() {
         siteID={siteID}
         activeThumbnails={activeThumbnails}
         setActiveThumbnails={setActiveThumbnails}
+        activeActivityButton={activeActivityButton}
         decision={decision}
         decisionButton={decisionButton}/>
         </div>      
