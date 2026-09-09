@@ -20,7 +20,6 @@ interface Decision {
   [id: string] : DecisionLabels
 }
 
-// 
   
 
 export type MapName = "event_thumbnail" | "mtz_thumbnail" | "fofc_thumbnail" | "overlay_thumbnail" | "clash_thumbnail";
@@ -39,13 +38,6 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
   };
 
 
-// if (siteID === "All" && decisionButton === "All") {
-//     title = "Thumbnails!"
-//   } else if (decisionButton !== "All") {
-//     title = `Reviewed - ${decisionButton}`;
-//   } else {
-//     title = `Site ${siteID}`;
-//   }
 
   const activeGif : MapGif = 
     mapName === "mtz_thumbnail" && activeActivityButton === "Rock"
@@ -107,8 +99,8 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
               </svg>
               <p className='clash-warning-label'><b>Clash or close contact</b></p>
             </div> )}
-            <p><b>Event score:</b> {thumbnail.z_peak}</p>
-            <p><b>Build score:</b> {thumbnail.build_score}</p>
+            <p><b>Event score:</b> {Math.round(thumbnail.event_score * 100) / 100}</p>
+            <p><b>Build score:</b> {Math.round(thumbnail.build_score * 100) / 100}</p>
             <p><b>rfree/rwork:</b> {thumbnail.r_free}/{thumbnail.r_work}</p>
             <p><b>Resolution:</b> {thumbnail.analysed_resolution}</p>
         </div>
