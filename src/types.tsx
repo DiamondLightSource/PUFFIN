@@ -7,6 +7,7 @@ export interface Thumbnail {
     z_peak: number; 
     r_free: number; 
     r_work: number; 
+    event_score: number;
     analysed_resolution: number;
     event_thumbnail: string;
     event_gif: string | null;
