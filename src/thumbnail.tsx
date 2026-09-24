@@ -87,22 +87,25 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
               width: "200px"
               }}/>
             </div>
-            <h3>{thumbnail.dtag}</h3>
-            <h4> Event {thumbnail.event_idx}</h4>
+            <h3>{thumbnail.dtag} #{thumbnail.event_idx} </h3>
         <div className="statistics">
 
             { thumbnail["clash_thumbnail"] && ( <div className='clash-warning'>
-              <svg  className="warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
-                fill="#bb2124" viewBox="0 0 24 24" >
+              <svg  className={`warning-label ${activeThumbnails.includes(thumbnail.id) ? "active-warning" : ""}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
+                fill="#ff2800" viewBox="0 0 24 24" >
                 {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
                 <path d="M12.87 2.51c-.35-.63-1.4-.63-1.75 0l-9.99 18c-.17.31-.17.69.01.99.18.31.51.49.86.49h20c.35 0 .68-.19.86-.49a1 1 0 0 0 .01-.99zM13 19h-2v-2h2zm0-4h-2V9h2z"></path>
               </svg>
-              <p className='clash-warning-label'><b>Clash or close contact</b></p>
+              <p className={`clash-warning-label ${activeThumbnails.includes(thumbnail.id) ? "active-warning" : ""}`}><b>Clash or close contact</b></p>
             </div> )}
-            <p><b>Event score:</b> {Math.round(thumbnail.event_score * 100) / 100}</p>
-            <p><b>Build score:</b> {Math.round(thumbnail.build_score * 100) / 100}</p>
-            <p><b>rfree/rwork:</b> {thumbnail.r_free}/{thumbnail.r_work}</p>
-            <p><b>Resolution:</b> {thumbnail.analysed_resolution}</p>
+            <div className="row">
+              <p><b>Event:</b> {Math.round(thumbnail.event_score * 100) / 100}</p>
+              <p><b>Build:</b> {Math.round(thumbnail.build_score * 100) / 100}</p>
+            </div>
+            <div className="row">
+              <p><b>rf/rw:</b> {thumbnail.r_free}/{thumbnail.r_work}</p>
+              <p><b>Res.:</b> {thumbnail.analysed_resolution}</p>
+            </div>
         </div>
         </button>
       )
