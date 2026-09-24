@@ -43,7 +43,7 @@ const thumbnailActivityList: ThumbnailActivityLabels[] = ["Rock", "Contour"]
 
 
 thumbnailData.sort((a, b) => a.site_idx - b.site_idx || b.z_peak - a.z_peak)
-siteList.unshift("All")
+// siteList.unshift("All")
 
 let title: string = '';
 
@@ -57,7 +57,7 @@ export default function MyApp() {
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
   const [decisionButton, setDecisionButton] = useState<DecisionLabels | "All">("All")
-  const [showDiv, setShowDiv] = useState<"Site" | "Reviewed">("Site")
+  const [showDiv, setShowDiv] = useState<"All" | "Site" | "Reviewed">("All")
   
 
   const applyDecision = (decision: DecisionLabels, activeThumbnailsArray: string[]) => {
@@ -80,6 +80,7 @@ export default function MyApp() {
   };
 
   const handleReset = () => {
+    setShowDiv("All")
     setDecisionButton("All");
     setActiveIDButton("All");
     setSiteID("All");
@@ -90,7 +91,7 @@ export default function MyApp() {
 
 
   if (siteID === "All" && decisionButton === "All") {
-    title = "Thumbnails!"
+    title = ""
   } else if (decisionButton !== "All") {
     title = `Reviewed - ${decisionButton}`;
   } else {
@@ -157,13 +158,23 @@ export default function MyApp() {
         </div>
       </div>
       <div className='main-container'>
+        <button
+        key='all-button'
+        className={`main-button ${showDiv === "All" ? "active" : ""}`} type="button" 
+          onClick={() => {
+            setShowDiv("All")
+            setActiveIDButton("All")
+            setSiteID("All")
+            setDecisionButton("All")
+          }}
+        >All</button>
         <button 
           key='site-list'
           className={`main-button ${showDiv === "Site" ? "active" : ""}`} type="button" 
           onClick={() => {
             setShowDiv("Site")
-            setActiveIDButton("All")
-            setSiteID("All")
+            setActiveIDButton(siteList[0])
+            setSiteID(siteList[0])
             setDecisionButton("All")
           }}
           >Sites</button>
@@ -176,7 +187,7 @@ export default function MyApp() {
             }}
             >Reviewed</button>
         <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none" }}>
-            <h3>Sites</h3>
+            {/* <h3>Sites</h3> */}
             {siteList.map(siteID => (
               <button 
               key={siteID}
@@ -189,7 +200,7 @@ export default function MyApp() {
             ))}
           </div>
           <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
-            <h3>Reviewed</h3>
+            {/* <h3>Reviewed</h3> */}
             {buttonList.map(buttonName => (
               <button 
               key={`${buttonName}_review`}
