@@ -13,7 +13,7 @@ const thumbnailData = originalThumbnailData.map((thumbnail) => ({
 }))
 
 
-type MapLabels = "Event" | "2FoFc" | "FoFc" | "Overlay" | "Clash or CC"
+type MapLabels = "Event" | "2FoFc" | "FoFc" | "Overlay" | "Surrounds"
 export type DecisionLabels = "Yes" | "No" | "Review"
 export type ThumbnailActivityLabels = "Rock" | "Contour"
 
@@ -28,7 +28,7 @@ const mapFileNames: mapFile[] = [
   {"label": "2FoFc", "mapName": "mtz_thumbnail"}, 
   {"label": "FoFc", "mapName": "fofc_thumbnail"}, 
   {"label": "Overlay", "mapName": "overlay_thumbnail"},
-  {"label": "Clash or CC", "mapName": "clash_thumbnail"}
+  {"label": "Surrounds", "mapName": "clash_thumbnail"}
 ]
 
 export type SiteID = number | string
@@ -37,14 +37,12 @@ export type SiteID = number | string
 
 const siteData = thumbnailData.map(item => item.site_idx)
 const siteList: SiteID[] = [... new Set(siteData)]
-const buttonList: DecisionLabels[] = ["Yes", "No", "Review"]
+const buttonList: DecisionLabels[] = ["Yes", "Review", "No"]
 const thumbnailActivityList: ThumbnailActivityLabels[] = ["Rock", "Contour"]
 
 
 
-thumbnailData.sort((a, b) => a.site_idx - b.site_idx || b.z_peak - a.z_peak)
-// siteList.unshift("All")
-
+thumbnailData.sort((a, b) => b.event_score - a.event_score)
 let title: string = '';
 
 
