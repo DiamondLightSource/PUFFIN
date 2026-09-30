@@ -4,6 +4,12 @@ import './thumnails.css'
 import ThumbnailCard from './thumbnail'
 import type {MapName} from './thumbnail'
 import thumbnail_data from './assets/mappings2.json'
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { Divider } from '@mui/material'
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
+
 
 
 const originalThumbnailData = Object.values(thumbnail_data)
@@ -91,7 +97,7 @@ export default function MyApp() {
   if (siteID === "All" && decisionButton === "All") {
     title = ""
   } else if (decisionButton !== "All") {
-    title = `Reviewed - ${decisionButton}`;
+    title = `Decision - ${decisionButton}`;
   } else {
     title = `Site ${siteID}`;
   }
@@ -113,79 +119,156 @@ export default function MyApp() {
   };
 
   return (
-    <div>
+    <div className='page-container'>
       <div className='top-container'>
-        <div className='controls-container'>
-          <div className='maps-container'>
-            <h3>Maps</h3>
-            {mapFileNames.map(mapName => (
-              <button 
-              key={mapName.label}
-              className={`main-button ${activeMapButton === mapName.mapName ? "active" : ""}`} type="button" 
-              onClick={() => {
-                setMapName(mapName.mapName)
-                setActiveMapButton(mapName.mapName)
-              }}>{mapName.label}</button>
-            ))}
-          </div>
-          <div>
-            <h3>Action</h3>
-            {thumbnailActivityList.map(activityName => (
-              <button
-              key={activityName}
-              className={`main-button ${activeActivityButton === activityName ? "active" : ""}`} type="button" 
-              onClick={() => {
-                setActiveActivityButton(activityName)
+        <div className='maps-container'>   
+            <Tabs 
+              className= "navigation-tabs"
+              value = {activeMapButton} 
+              onChange={(event, newMap) => {
+                    setMapName(newMap)
+                    setActiveMapButton(newMap)
+                  }} 
+              aria-label="Available maps"
+              >
+              {mapFileNames.map(mapName => (  
+                <Tab 
+                  key = {mapName.mapName}
+                  label = {mapName.label} 
+                  value = {mapName.mapName}
+                />
+                ))}
+            </Tabs>
+
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{
+                borderColor: '#9ca3af',
+                margin: '10px 10px',
               }}
-              >{activityName}</button>
-            ))}
-            
-          </div>
+            />
+            <Tabs 
+              className= "navigation-tabs"
+              value={activeActivityButton}
+              onChange={(event, newActivity) => {
+                setActiveActivityButton(newActivity)
+              }}
+              aria-label="Map behaviour"
+              >
+                {thumbnailActivityList.map(activityName => (
+                  <Tab 
+                    key = {activityName}
+                    label = {activityName}
+                    value = {activityName}
+                  />
+                  ))}
+              </Tabs>
+
         </div>
         <div className='decision-container'>
-          <h3>Decision</h3>  
-          {buttonList.map(buttonName => (
-            <button 
-            key={`${buttonName}_decision`}
-            className="main-button" 
-            onClick={() => {
-              handleDecisions(buttonName)
-            }
-            }>{buttonName}</button>
-          ))}
+          <Stack direction="row" spacing={2}
+            sx= {{
+              paddingRight: 5
+            }}>
+            {buttonList.map(buttonName => (
+              <Button
+                className="main-button"
+                variant="outlined"
+                key={`${buttonName}_decision`}
+                onClick={() => {
+                  handleDecisions(buttonName)
+                  }
+                }
+                sx= {{
+                  color: "white",
+                  borderColor: "#646973",
+                  "&:hover": {
+                    borderColor: "#646973",
+                    backgroundColor: "green"
+                  }
+                }}
+                >{buttonName}</Button>
+            ))}
+          </Stack>
         </div>
       </div>
       <div className='main-container'>
-        <button
-        key='all-button'
-        className={`main-button ${showDiv === "All" ? "active" : ""}`} type="button" 
-          onClick={() => {
-            setShowDiv("All")
-            setActiveIDButton("All")
-            setSiteID("All")
-            setDecisionButton("All")
-          }}
-        >All</button>
-        <button 
-          key='site-list'
-          className={`main-button ${showDiv === "Site" ? "active" : ""}`} type="button" 
-          onClick={() => {
-            setShowDiv("Site")
-            setActiveIDButton(siteList[0])
-            setSiteID(siteList[0])
-            setDecisionButton("All")
-          }}
-          >Sites</button>
-        <button 
-            key='reviewed-list'
-            className={`main-button ${showDiv === "Reviewed" ? "active" : ""}`} type="button" 
+        <Stack direction= "row" spacing={2} 
+          sx= {{
+            justifyContent: "center",
+            paddingTop: 2,
+            paddingBottom: 2
+          }}>
+          <Button
+            key='all-button'
+            variant={showDiv === "All" ? "contained" : "outlined"}
             onClick={() => {
-              setShowDiv("Reviewed")
-              setDecisionButton("Yes")
+              setShowDiv("All")
+              setActiveIDButton("All")
+              setSiteID("All")
+              setDecisionButton("All")
             }}
-            >Reviewed</button>
+            sx= {{
+              color: "white",
+              borderColor: "#646973",
+              backgroundColor: showDiv === "All" ? "green" : "transparent",
+              "&:hover": {
+                borderColor: "#646973",
+                backgroundColor: "green"
+              },
+              "&:active": {
+                borderColor: "#646973",
+                backgroundColor: "green"
+              }
+            }}
+          >All</Button>
+          <Button 
+            key='site-list'
+            variant={showDiv === "Site" ? "contained" : "outlined"}
+            onClick={() => {
+              setShowDiv("Site")
+              setActiveIDButton(siteList[0])
+              setSiteID(siteList[0])
+              setDecisionButton("All")
+            }}
+            sx= {{
+              color: "white",
+              borderColor: "#646973",
+              backgroundColor: showDiv === "Site" ? "green" : "transparent",
+              "&:hover": {
+                borderColor: "#646973",
+                backgroundColor: "green"
+              },
+              "&:active": {
+                borderColor: "#646973",
+                backgroundColor: "green"
+              }
+            }}
+            >Sites</Button>
+          <Button 
+              key='reviewed-list'
+              variant={showDiv === "Reviewed" ? "contained" : "outlined"}
+              onClick={() => {
+                setShowDiv("Reviewed")
+                setDecisionButton("Yes")
+              }}
+              sx= {{
+              color: "white",
+              borderColor: "#646973",
+              backgroundColor: showDiv === "Reviewed" ? "green" : "transparent",
+              "&:hover": {
+                borderColor: "#646973",
+                backgroundColor: "green"
+              },
+              "&:active": {
+                borderColor: "#646973",
+                backgroundColor: "green"
+              }
+            }}
+              >Decision</Button>
+        </Stack>
         <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none" }}>
-            {/* <h3>Sites</h3> */}
             {siteList.map(siteID => (
               <button 
               key={siteID}
@@ -198,7 +281,6 @@ export default function MyApp() {
             ))}
           </div>
           <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
-            {/* <h3>Reviewed</h3> */}
             {buttonList.map(buttonName => (
               <button 
               key={`${buttonName}_review`}
@@ -229,4 +311,5 @@ export default function MyApp() {
     </div>
   );
 }
+
 
