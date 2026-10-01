@@ -3,12 +3,13 @@ import './App.css'
 import './thumnails.css'
 import ThumbnailCard from './thumbnail'
 import type {MapName} from './thumbnail'
-import thumbnail_data from './assets/mappings2.json'
+import thumbnail_data from './assets/version2_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Divider } from '@mui/material'
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
+import { Divider, Button, Stack, Pagination } from '@mui/material'
+// import Button from '@mui/material/Button';
+// import Stack from '@mui/material/Stack';
+
 
 
 
@@ -30,10 +31,10 @@ interface mapFile {
 }
 
 const mapFileNames: mapFile[] = [
-  {"label": "Event", "mapName": "event_thumbnail"}, 
+  {"label": "Event", "mapName": "eventmap_thumbnail"}, 
   {"label": "2FoFc", "mapName": "mtz_thumbnail"}, 
   {"label": "FoFc", "mapName": "fofc_thumbnail"}, 
-  {"label": "Overlay", "mapName": "overlay_thumbnail"},
+  {"label": "Overlay", "mapName": "overlay_eventmap_fofc_thumbnail"},
   {"label": "Surrounds", "mapName": "clash_thumbnail"}
 ]
 
@@ -53,10 +54,10 @@ let title: string = '';
 
 
 export default function MyApp() {
-  const [mapName, setMapName] = useState<MapName>("event_thumbnail")
+  const [mapName, setMapName] = useState<MapName>("eventmap_thumbnail")
   const [siteID, setSiteID] = useState<SiteID>("All")
   const [activeIDButton, setActiveIDButton] = useState<SiteID>("All")
-  const [activeMapButton, setActiveMapButton] = useState<MapName>("event_thumbnail")
+  const [activeMapButton, setActiveMapButton] = useState<MapName>("eventmap_thumbnail")
   const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Rock")
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
@@ -117,6 +118,9 @@ export default function MyApp() {
 
     URL.revokeObjectURL(url);
   };
+
+
+  console.log(Math.max(...siteList.map(Number)))
 
   return (
     <div className='page-container'>
@@ -268,17 +272,33 @@ export default function MyApp() {
             }}
               >Decision</Button>
         </Stack>
-        <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none" }}>
-            {siteList.map(siteID => (
-              <button 
-              key={siteID}
-              className={`main-button ${activeIDButton === siteID && decisionButton === "All" ? "active" : ""}`} type="button" 
-              onClick={() => {
-                setSiteID(siteID);
-                setActiveIDButton(siteID)
-                setDecisionButton("All")
-              }}>{siteID}</button>
-            ))}
+        <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none"}}>
+          
+            <Stack spacing={2} sx = {{alignItems: "center"}}>
+              <Pagination 
+                count={Math.max(...siteList.map(Number))} 
+                shape='rounded' 
+                variant='outlined'
+                siblingCount={4}
+                onChange={(event, page) => {
+                  setSiteID(page);
+                  setActiveIDButton(page)
+                  setDecisionButton("All")
+                }}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white",
+                    borderColor: "#646973",
+                  },
+
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "green",
+                    color: "white",
+                    borderColor: "#646973",
+                  },
+                }}/>
+
+            </Stack>
           </div>
           <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
             {buttonList.map(buttonName => (
