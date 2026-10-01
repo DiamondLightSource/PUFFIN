@@ -3,7 +3,7 @@ import './App.css'
 import './thumnails.css'
 import ThumbnailCard from './thumbnail'
 import type {MapName} from './thumbnail'
-import thumbnail_data from './assets/mappings2.json'
+import thumbnail_data from './assets/version2_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Divider } from '@mui/material'
@@ -30,10 +30,10 @@ interface mapFile {
 }
 
 const mapFileNames: mapFile[] = [
-  {"label": "Event", "mapName": "event_thumbnail"}, 
+  {"label": "Event", "mapName": "eventmap_thumbnail"}, 
   {"label": "2FoFc", "mapName": "mtz_thumbnail"}, 
   {"label": "FoFc", "mapName": "fofc_thumbnail"}, 
-  {"label": "Overlay", "mapName": "overlay_thumbnail"},
+  {"label": "Overlay", "mapName": "overlay_eventmap_fofc_thumbnail"},
   {"label": "Surrounds", "mapName": "clash_thumbnail"}
 ]
 
@@ -53,10 +53,10 @@ let title: string = '';
 
 
 export default function MyApp() {
-  const [mapName, setMapName] = useState<MapName>("event_thumbnail")
+  const [mapName, setMapName] = useState<MapName>("eventmap_thumbnail")
   const [siteID, setSiteID] = useState<SiteID>("All")
   const [activeIDButton, setActiveIDButton] = useState<SiteID>("All")
-  const [activeMapButton, setActiveMapButton] = useState<MapName>("event_thumbnail")
+  const [activeMapButton, setActiveMapButton] = useState<MapName>("eventmap_thumbnail")
   const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Rock")
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})

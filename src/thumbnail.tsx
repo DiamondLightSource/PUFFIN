@@ -22,8 +22,8 @@ interface Decision {
 
   
 
-export type MapName = "event_thumbnail" | "mtz_thumbnail" | "fofc_thumbnail" | "overlay_thumbnail" | "clash_thumbnail";
-type MapGif = "event_gif" | "mtz_gif" | "fofc_gif" | "overlay_gif" | "clash_gif" | "event_contour_thumbnail" | "mtz_contour_thumbnail" | "no_gif"
+export type MapName = "eventmap_thumbnail" | "mtz_thumbnail" | "fofc_thumbnail" | "overlay_eventmap_fofc_thumbnail" | "clash_thumbnail";
+type MapGif = "eventmap_gif" | "mtz_gif" | "fofc_gif" | "overlay_eventmap_fofc_gif" | "clash_gif" | "eventmap_contour_gif" | "mtz_contour_gif" | "clash_contour_gif" | "no_gif"
 
 
 function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setActiveThumbnails, activeActivityButton, decisionButton, decision} : ThumbnailProps){
@@ -43,27 +43,29 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
     mapName === "mtz_thumbnail" && activeActivityButton === "Rock"
     ? "mtz_gif"
     : mapName === "mtz_thumbnail" && activeActivityButton === "Contour"
-    ? "mtz_contour_thumbnail"
+    ? "mtz_contour_gif"
     : mapName === "fofc_thumbnail" && activeActivityButton === "Rock"
     ? "fofc_gif"
-    : mapName === "overlay_thumbnail" && activeActivityButton === "Rock"
-    ? "overlay_gif"
+    : mapName === "overlay_eventmap_fofc_thumbnail" && activeActivityButton === "Rock"
+    ? "overlay_eventmap_fofc_gif"
     : mapName === "clash_thumbnail" && activeActivityButton === "Rock"
     ? "clash_gif"
-    : mapName === "event_thumbnail" && activeActivityButton === "Contour"
-    ? "event_contour_thumbnail"
-    : mapName === "event_thumbnail" && activeActivityButton === "Rock"
-    ? "event_gif"
+    : mapName === "clash_thumbnail" && activeActivityButton === "Contour"
+    ? "clash_contour_gif"
+    : mapName === "eventmap_thumbnail" && activeActivityButton === "Contour"
+    ? "eventmap_contour_gif"
+    : mapName === "eventmap_thumbnail" && activeActivityButton === "Rock"
+    ? "eventmap_gif"
     : "no_gif";
   
   const getReadableMapName = (nameOfMap : MapName) => {
-    if (nameOfMap === "event_thumbnail") {
+    if (nameOfMap === "eventmap_thumbnail") {
       return "Event map "
     } else if (nameOfMap === "mtz_thumbnail") {
       return "2FoFc map "
     } else if (nameOfMap === "fofc_thumbnail") {
       return "FoFc map "
-    } else if (nameOfMap === "overlay_thumbnail") {
+    } else if (nameOfMap === "overlay_eventmap_fofc_thumbnail") {
       return "Overlay of event map, 2FoFc map and FoFc map "
     } else {
       return "Event map with residues, solvents etc within 3 Angstrom radius "
@@ -190,7 +192,7 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
         ? !(thumbnail.id in decision)
         : decision[thumbnail.id] === decisionButton)
     .map(thumbnail => {  
-      const thumbnailSrc = thumbnail[mapName] ?? thumbnail["event_thumbnail"];
+      const thumbnailSrc = thumbnail[mapName] ?? thumbnail["eventmap_thumbnail"];
       const gifSrc = thumbnail[activeGif];
       return(
         <button 
@@ -218,7 +220,7 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
             <h3>{thumbnail.dtag} #{thumbnail.event_idx} </h3>
         <div className="statistics">
 
-            { thumbnail["clash_thumbnail"] && ( <div className='clash-warning'>
+            { thumbnail["clash_status"] && ( <div className='clash-warning'>
               <svg  className={`warning-label ${activeThumbnails.includes(thumbnail.id) ? "active-warning" : ""}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
                 fill="#ff2800" viewBox="0 0 24 24" >
                 {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
@@ -234,7 +236,10 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
                 {/* eventScoreSvg(thumbnail.event_score, activeThumbnails.includes(thumbnail.id) ? true : false) */}
                 <p><b>Event:</b> {Math.round(thumbnail.event_score * 100) / 100}</p>
               </div>
-              <div>
+              <div className='score-info'>
+                {thumbnail.build_score > 0.9 ? scoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) : 
+                (thumbnail.build_score > 0.8 && thumbnail.build_score <= 0.9) ? scoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) :
+                  scoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
                 <p><b>Build:</b> {Math.round(thumbnail.build_score * 100) / 100}</p>
               </div>
             </div>
