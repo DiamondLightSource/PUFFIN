@@ -6,9 +6,10 @@ import type {MapName} from './thumbnail'
 import thumbnail_data from './assets/version2_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Divider } from '@mui/material'
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
+import { Divider, Button, Stack, Pagination } from '@mui/material'
+// import Button from '@mui/material/Button';
+// import Stack from '@mui/material/Stack';
+
 
 
 
@@ -117,6 +118,9 @@ export default function MyApp() {
 
     URL.revokeObjectURL(url);
   };
+
+
+  console.log(Math.max(...siteList.map(Number)))
 
   return (
     <div className='page-container'>
@@ -268,17 +272,33 @@ export default function MyApp() {
             }}
               >Decision</Button>
         </Stack>
-        <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none" }}>
-            {siteList.map(siteID => (
-              <button 
-              key={siteID}
-              className={`main-button ${activeIDButton === siteID && decisionButton === "All" ? "active" : ""}`} type="button" 
-              onClick={() => {
-                setSiteID(siteID);
-                setActiveIDButton(siteID)
-                setDecisionButton("All")
-              }}>{siteID}</button>
-            ))}
+        <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none"}}>
+          
+            <Stack spacing={2} sx = {{alignItems: "center"}}>
+              <Pagination 
+                count={Math.max(...siteList.map(Number))} 
+                shape='rounded' 
+                variant='outlined'
+                siblingCount={4}
+                onChange={(event, page) => {
+                  setSiteID(page);
+                  setActiveIDButton(page)
+                  setDecisionButton("All")
+                }}
+                sx={{
+                  "& .MuiPaginationItem-root": {
+                    color: "white",
+                    borderColor: "#646973",
+                  },
+
+                  "& .MuiPaginationItem-root.Mui-selected": {
+                    backgroundColor: "green",
+                    color: "white",
+                    borderColor: "#646973",
+                  },
+                }}/>
+
+            </Stack>
           </div>
           <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
             {buttonList.map(buttonName => (
