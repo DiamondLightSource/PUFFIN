@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import './thumnails.css'
+import type { Thumbnail } from "./types";
 import ThumbnailCard from './thumbnail'
 import type {MapName} from './thumbnail'
 import thumbnail_data from './assets/version2_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Divider, Button, Stack, Pagination } from '@mui/material'
-// import Button from '@mui/material/Button';
-// import Stack from '@mui/material/Stack';
 
 
 
@@ -56,7 +55,6 @@ let title: string = '';
 export default function MyApp() {
   const [mapName, setMapName] = useState<MapName>("eventmap_thumbnail")
   const [siteID, setSiteID] = useState<SiteID>("All")
-  const [activeIDButton, setActiveIDButton] = useState<SiteID>("All")
   const [activeMapButton, setActiveMapButton] = useState<MapName>("eventmap_thumbnail")
   const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Rock")
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
@@ -87,12 +85,32 @@ export default function MyApp() {
   const handleReset = () => {
     setShowDiv("All")
     setDecisionButton("All");
-    setActiveIDButton("All");
+    // setActiveIDButton("All");
     setSiteID("All");
     setActiveThumbnails([]);
     setDecision({});
     downloadDecisionJSON();
   }
+
+  const handleBulkSelection = (buttonValue : string, thumbnailData : Thumbnail[]) => {
+    if (buttonValue === 'selectAll') {
+      thumbnailData
+      .filter(thumbnail => siteID === "All" || thumbnail.site_idx === siteID)
+      .filter(thumbnail => 
+      decisionButton === "All"
+        ? !(thumbnail.id in decision)
+        : decision[thumbnail.id] === decisionButton)
+        .map(thumbnail => {
+
+        setActiveThumbnails(previous => {
+          return [...previous, thumbnail.id];
+        }) 
+      })
+    } else if (buttonValue === 'deselectAll'){
+        setActiveThumbnails([]);
+    }
+  }
+
 
 
   if (siteID === "All" && decisionButton === "All") {
@@ -119,8 +137,6 @@ export default function MyApp() {
     URL.revokeObjectURL(url);
   };
 
-
-  console.log(Math.max(...siteList.map(Number)))
 
   return (
     <div className='page-container'>
@@ -169,6 +185,25 @@ export default function MyApp() {
                   ))}
               </Tabs>
 
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{
+                borderColor: '#9ca3af',
+                margin: '10px 10px',
+              }}
+            />
+
+            <Tabs
+              className='navigation-tabs'
+              value={false}
+              onChange= {(event, selectionType) => {handleBulkSelection(selectionType, thumbnailData, decision)}}
+              aria-label= "Selection behaviour"
+              >
+                <Tab key = "selectAll" label = "select All" value = "selectAll"/>
+                <Tab key = "deselectAll" label = "deselect All" value = "deselectAll"/>
+              </Tabs>
+
         </div>
         <div className='decision-container'>
           <Stack direction="row" spacing={2}
@@ -209,7 +244,7 @@ export default function MyApp() {
             variant={showDiv === "All" ? "contained" : "outlined"}
             onClick={() => {
               setShowDiv("All")
-              setActiveIDButton("All")
+              // setActiveIDButton("All")
               setSiteID("All")
               setDecisionButton("All")
             }}
@@ -232,7 +267,7 @@ export default function MyApp() {
             variant={showDiv === "Site" ? "contained" : "outlined"}
             onClick={() => {
               setShowDiv("Site")
-              setActiveIDButton(siteList[0])
+              // setActiveIDButton(siteList[0])
               setSiteID(siteList[0])
               setDecisionButton("All")
             }}
@@ -256,6 +291,7 @@ export default function MyApp() {
               onClick={() => {
                 setShowDiv("Reviewed")
                 setDecisionButton("Yes")
+                setSiteID("All")
               }}
               sx= {{
               color: "white",
@@ -282,7 +318,7 @@ export default function MyApp() {
                 siblingCount={4}
                 onChange={(event, page) => {
                   setSiteID(page);
-                  setActiveIDButton(page)
+                  // setActiveIDButton(page)
                   setDecisionButton("All")
                 }}
                 sx={{
@@ -301,15 +337,32 @@ export default function MyApp() {
             </Stack>
           </div>
           <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
-            {buttonList.map(buttonName => (
-              <button 
-              key={`${buttonName}_review`}
-              className={`main-button ${decisionButton === buttonName ? "active" : ""}`} 
-              onClick={() => {
-                setDecisionButton(buttonName)
-                setSiteID("All")}
-            }>{buttonName}</button>
-          ))}
+            <Stack direction="row" spacing={2} sx = {{justifyContent: "center"}}>
+              {buttonList.map(buttonName => (
+                <Button 
+                key={`${buttonName}_review`}
+                // className={`main-button ${decisionButton === buttonName ? "active" : ""}`} 
+                variant={decisionButton === buttonName ? "contained" : "outlined"}
+                onClick={() => {
+                  setDecisionButton(buttonName)
+                  setSiteID("All")}
+                }
+                sx= {{
+                  color: "white",
+                  borderColor: "#646973",
+                  backgroundColor: decisionButton === buttonName ? "green" : "transparent",
+                  "&:hover": {
+                    borderColor: "#646973",
+                    backgroundColor: "green"
+                  },
+                  "&:active": {
+                    borderColor: "#646973",
+                    backgroundColor: "green"
+                  }
+                }}
+                >{buttonName}</Button>
+            ))}
+          </Stack>
         </div>
         <h1>{title}</h1>
         <div className='thumbnail-container'>
@@ -324,10 +377,24 @@ export default function MyApp() {
         decisionButton={decisionButton}/>
         </div>      
       </div>
-      <button
+      <Button
       key="reset"
-      className='main-button'
-      onClick={() => handleReset()}>Reset</button>
+      // className='main-button'
+      variant="outlined"
+      onClick={() => handleReset()}
+      sx= {{
+        color: "white",
+        borderColor: "#646973",
+        "&:hover": {
+          borderColor: "#646973",
+          backgroundColor: "green"
+        },
+        "&:active": {
+          borderColor: "#646973",
+          backgroundColor: "green"
+        }
+      }}
+      >Submit</Button>
     </div>
   );
 }
