@@ -61,6 +61,9 @@ export default function MyApp() {
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
   const [decisionButton, setDecisionButton] = useState<DecisionLabels | "All">("All")
   const [showDiv, setShowDiv] = useState<"All" | "Site" | "Reviewed">("All")
+  const [showContent, setShowContent] = useState<"Introduction" | "MainContent">("Introduction")
+  const [startTime, setStartTime] = useState<number>()
+  
   
 
   const applyDecision = (decision: DecisionLabels, activeThumbnailsArray: string[]) => {
@@ -89,7 +92,14 @@ export default function MyApp() {
     setSiteID("All");
     setActiveThumbnails([]);
     setDecision({});
-    downloadDecisionJSON();
+    
+    if (startTime != null) {
+      downloadDecisionJSON(Math.floor((Date.now() - startTime) / 1000));
+    } else {
+      downloadDecisionJSON(null)
+    }
+    
+    setShowContent("Introduction")
   }
 
   const handleBulkSelection = (buttonValue : string, thumbnailData : Thumbnail[]) => {
@@ -121,7 +131,8 @@ export default function MyApp() {
     title = `Site ${siteID}`;
   }
 
-  const downloadDecisionJSON = () => {
+  const downloadDecisionJSON = (totalTime) => {
+    decision["Time"] = totalTime;
     const blob = new Blob(
       [JSON.stringify(decision, null, 2)],
       { type: "application/json" }
@@ -233,25 +244,18 @@ export default function MyApp() {
         </div>
       </div>
       <div className='main-container'>
-        <Stack direction= "row" spacing={2} 
-          sx= {{
-            justifyContent: "center",
-            paddingTop: 2,
-            paddingBottom: 2
-          }}>
+        <div className='introduction' style={{ display: showContent === "Introduction" ? "block" : "none"}}>
           <Button
-            key='all-button'
-            variant={showDiv === "All" ? "contained" : "outlined"}
+            key='start-app'
+            variant="outlined"
             onClick={() => {
-              setShowDiv("All")
-              // setActiveIDButton("All")
-              setSiteID("All")
-              setDecisionButton("All")
+              setStartTime(Date.now())
+              setShowContent("MainContent")
             }}
             sx= {{
+              margin: 2,
               color: "white",
               borderColor: "#646973",
-              backgroundColor: showDiv === "All" ? "green" : "transparent",
               "&:hover": {
                 borderColor: "#646973",
                 backgroundColor: "green"
@@ -261,140 +265,173 @@ export default function MyApp() {
                 backgroundColor: "green"
               }
             }}
-          >All</Button>
-          <Button 
-            key='site-list'
-            variant={showDiv === "Site" ? "contained" : "outlined"}
-            onClick={() => {
-              setShowDiv("Site")
-              // setActiveIDButton(siteList[0])
-              setSiteID(siteList[0])
-              setDecisionButton("All")
-            }}
+            >Start
+          </Button>
+        </div>
+        <div className='main-content' style={{ display: showContent === "MainContent" ? "block" : "none"}}>
+          <Stack direction= "row" spacing={2} 
             sx= {{
-              color: "white",
-              borderColor: "#646973",
-              backgroundColor: showDiv === "Site" ? "green" : "transparent",
-              "&:hover": {
-                borderColor: "#646973",
-                backgroundColor: "green"
-              },
-              "&:active": {
-                borderColor: "#646973",
-                backgroundColor: "green"
-              }
-            }}
-            >Sites</Button>
-          <Button 
-              key='reviewed-list'
-              variant={showDiv === "Reviewed" ? "contained" : "outlined"}
+              justifyContent: "center",
+              paddingTop: 2,
+              paddingBottom: 2
+            }}>
+            <Button
+              key='all-button'
+              variant={showDiv === "All" ? "contained" : "outlined"}
               onClick={() => {
-                setShowDiv("Reviewed")
-                setDecisionButton("Yes")
+                setShowDiv("All")
+                // setActiveIDButton("All")
                 setSiteID("All")
+                setDecisionButton("All")
               }}
               sx= {{
-              color: "white",
-              borderColor: "#646973",
-              backgroundColor: showDiv === "Reviewed" ? "green" : "transparent",
-              "&:hover": {
+                color: "white",
                 borderColor: "#646973",
-                backgroundColor: "green"
-              },
-              "&:active": {
-                borderColor: "#646973",
-                backgroundColor: "green"
-              }
-            }}
-              >Decision</Button>
-        </Stack>
-        <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none"}}>
-          
-            <Stack spacing={2} sx = {{alignItems: "center"}}>
-              <Pagination 
-                count={Math.max(...siteList.map(Number))} 
-                shape='rounded' 
-                variant='outlined'
-                siblingCount={4}
-                onChange={(event, page) => {
-                  setSiteID(page);
-                  // setActiveIDButton(page)
-                  setDecisionButton("All")
-                }}
-                sx={{
-                  "& .MuiPaginationItem-root": {
-                    color: "white",
-                    borderColor: "#646973",
-                  },
-
-                  "& .MuiPaginationItem-root.Mui-selected": {
-                    backgroundColor: "green",
-                    color: "white",
-                    borderColor: "#646973",
-                  },
-                }}/>
-
-            </Stack>
-          </div>
-          <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
-            <Stack direction="row" spacing={2} sx = {{justifyContent: "center"}}>
-              {buttonList.map(buttonName => (
-                <Button 
-                key={`${buttonName}_review`}
-                // className={`main-button ${decisionButton === buttonName ? "active" : ""}`} 
-                variant={decisionButton === buttonName ? "contained" : "outlined"}
-                onClick={() => {
-                  setDecisionButton(buttonName)
-                  setSiteID("All")}
-                }
-                sx= {{
-                  color: "white",
+                backgroundColor: showDiv === "All" ? "green" : "transparent",
+                "&:hover": {
                   borderColor: "#646973",
-                  backgroundColor: decisionButton === buttonName ? "green" : "transparent",
-                  "&:hover": {
-                    borderColor: "#646973",
-                    backgroundColor: "green"
-                  },
-                  "&:active": {
-                    borderColor: "#646973",
-                    backgroundColor: "green"
-                  }
+                  backgroundColor: "green"
+                },
+                "&:active": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                }
+              }}
+            >All</Button>
+            <Button 
+              key='site-list'
+              variant={showDiv === "Site" ? "contained" : "outlined"}
+              onClick={() => {
+                setShowDiv("Site")
+                // setActiveIDButton(siteList[0])
+                setSiteID(siteList[0])
+                setDecisionButton("All")
+              }}
+              sx= {{
+                color: "white",
+                borderColor: "#646973",
+                backgroundColor: showDiv === "Site" ? "green" : "transparent",
+                "&:hover": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                },
+                "&:active": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                }
+              }}
+              >Sites</Button>
+            <Button 
+                key='reviewed-list'
+                variant={showDiv === "Reviewed" ? "contained" : "outlined"}
+                onClick={() => {
+                  setShowDiv("Reviewed")
+                  setDecisionButton("Yes")
+                  setSiteID("All")
                 }}
-                >{buttonName}</Button>
-            ))}
+                sx= {{
+                color: "white",
+                borderColor: "#646973",
+                backgroundColor: showDiv === "Reviewed" ? "green" : "transparent",
+                "&:hover": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                },
+                "&:active": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                }
+              }}
+                >Decision</Button>
           </Stack>
+          <div className='sites-container' style={{ display: showDiv === "Site" ? "block" : "none"}}>
+            
+              <Stack spacing={2} sx = {{alignItems: "center"}}>
+                <Pagination 
+                  count={Math.max(...siteList.map(Number))} 
+                  shape='rounded' 
+                  variant='outlined'
+                  siblingCount={4}
+                  onChange={(event, page) => {
+                    setSiteID(page);
+                    // setActiveIDButton(page)
+                    setDecisionButton("All")
+                  }}
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "white",
+                      borderColor: "#646973",
+                    },
+
+                    "& .MuiPaginationItem-root.Mui-selected": {
+                      backgroundColor: "green",
+                      color: "white",
+                      borderColor: "#646973",
+                    },
+                  }}/>
+
+              </Stack>
+            </div>
+            <div className='reviewed-container' style={{ display: showDiv === "Reviewed" ? "block" : "none" }}>
+              <Stack direction="row" spacing={2} sx = {{justifyContent: "center"}}>
+                {buttonList.map(buttonName => (
+                  <Button 
+                  key={`${buttonName}_review`}
+                  // className={`main-button ${decisionButton === buttonName ? "active" : ""}`} 
+                  variant={decisionButton === buttonName ? "contained" : "outlined"}
+                  onClick={() => {
+                    setDecisionButton(buttonName)
+                    setSiteID("All")}
+                  }
+                  sx= {{
+                    color: "white",
+                    borderColor: "#646973",
+                    backgroundColor: decisionButton === buttonName ? "green" : "transparent",
+                    "&:hover": {
+                      borderColor: "#646973",
+                      backgroundColor: "green"
+                    },
+                    "&:active": {
+                      borderColor: "#646973",
+                      backgroundColor: "green"
+                    }
+                  }}
+                  >{buttonName}</Button>
+              ))}
+              </Stack>
+            </div>
+          <h1>{title}</h1>
+          <div className='thumbnail-container'>
+            <ThumbnailCard 
+            mapName={mapName} 
+            thumbnailData={thumbnailData} 
+            siteID={siteID}
+            activeThumbnails={activeThumbnails}
+            setActiveThumbnails={setActiveThumbnails}
+            activeActivityButton={activeActivityButton}
+            decision={decision}
+            decisionButton={decisionButton}/>
+          </div>      
+          <Button
+          key="reset"
+          // className='main-button'
+          variant="outlined"
+          onClick={() => handleReset()}
+          sx= {{
+            color: "white",
+            borderColor: "#646973",
+            "&:hover": {
+              borderColor: "#646973",
+              backgroundColor: "green"
+            },
+            "&:active": {
+              borderColor: "#646973",
+              backgroundColor: "green"
+            }
+          }}
+          >Submit</Button>
         </div>
-        <h1>{title}</h1>
-        <div className='thumbnail-container'>
-        <ThumbnailCard 
-        mapName={mapName} 
-        thumbnailData={thumbnailData} 
-        siteID={siteID}
-        activeThumbnails={activeThumbnails}
-        setActiveThumbnails={setActiveThumbnails}
-        activeActivityButton={activeActivityButton}
-        decision={decision}
-        decisionButton={decisionButton}/>
-        </div>      
       </div>
-      <Button
-      key="reset"
-      // className='main-button'
-      variant="outlined"
-      onClick={() => handleReset()}
-      sx= {{
-        color: "white",
-        borderColor: "#646973",
-        "&:hover": {
-          borderColor: "#646973",
-          backgroundColor: "green"
-        },
-        "&:active": {
-          borderColor: "#646973",
-          backgroundColor: "green"
-        }
-      }}
-      >Submit</Button>
     </div>
   );
 }
