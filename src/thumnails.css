@@ -9,10 +9,10 @@
 }
 
 .card {
-  width: 250px;
+  width: 350px;
   border: 1px solid #FFFFFF;
   border-radius: 8px;
-  padding: 16px;
+  padding: 16px 16px 14px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);   
   background-color: #16171d; 
   color: #FFFFFF;
@@ -142,10 +142,20 @@ h1 {
     color: #9ca3af;
 }
 
+h2 {
+    font-weight: bold;
+    margin: 5px;
+    font-size: 20px;
+}
+
+p {
+    color: white;
+}
+
 .row {
     display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 20px;
+    grid-template-columns: 150px 1fr;
+    gap: 50px;
     white-space: nowrap;
 }
 
@@ -163,4 +173,50 @@ h1 {
 
 .navigation-tabs .MuiTabs-indicator {
     background-color: #4cbb17;
+}
+
+.help-icon:hover {
+    fill: #4cbb17;
+}
+
+.help-icon:active {
+    fill: #4cbb17;
+}
+
+.MuiAccordion-root {
+    background-color: #16171d !important;
+    color: white !important;
+    box-shadow: none !important;
+    border: 1px solid #646973 !important;
+    margin-bottom: 15px;
+}
+
+
+.MuiAccordionDetails-root {
+    text-align: left;
+}
+
+.flex-accordion-content {
+    display: flex;
+    text-align: left;
+    gap: 16px;
+    object-fit: contain;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.flex-accordion-content ul{
+    max-width: 800px;
+}
+
+.table-div {
+    margin-bottom: 30px;
+}
+
+.multicontent {
+    margin-bottom: 50px
+}
+
+.MuiTypography-root {
+    max-width: 800px;
 }

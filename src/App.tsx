@@ -3,8 +3,9 @@ import './App.css'
 import './thumnails.css'
 import type { Thumbnail } from "./types";
 import ThumbnailCard from './thumbnail'
+import HelpSection from './help';
 import type {MapName} from './thumbnail'
-import thumbnail_data from './assets/version2_mappings.json'
+import thumbnail_data from './assets/northern_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Divider, Button, Stack, Pagination } from '@mui/material'
@@ -21,7 +22,7 @@ const thumbnailData = originalThumbnailData.map((thumbnail) => ({
 
 type MapLabels = "Event" | "2FoFc" | "FoFc" | "Overlay" | "Surrounds"
 export type DecisionLabels = "Yes" | "No" | "Review"
-export type ThumbnailActivityLabels = "Rock" | "Contour"
+export type ThumbnailActivityLabels = "Contour" | "Rock" 
 
 
 interface mapFile {
@@ -44,7 +45,7 @@ export type SiteID = number | string
 const siteData = thumbnailData.map(item => item.site_idx)
 const siteList: SiteID[] = [... new Set(siteData)]
 const buttonList: DecisionLabels[] = ["Yes", "Review", "No"]
-const thumbnailActivityList: ThumbnailActivityLabels[] = ["Rock", "Contour"]
+const thumbnailActivityList: ThumbnailActivityLabels[] = ["Contour", "Rock"]
 
 
 
@@ -56,12 +57,12 @@ export default function MyApp() {
   const [mapName, setMapName] = useState<MapName>("eventmap_thumbnail")
   const [siteID, setSiteID] = useState<SiteID>("All")
   const [activeMapButton, setActiveMapButton] = useState<MapName>("eventmap_thumbnail")
-  const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Rock")
+  const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Contour")
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
   const [decisionButton, setDecisionButton] = useState<DecisionLabels | "All">("All")
   const [showDiv, setShowDiv] = useState<"All" | "Site" | "Reviewed">("All")
-  const [showContent, setShowContent] = useState<"Introduction" | "MainContent">("Introduction")
+  const [showContent, setShowContent] = useState<"Introduction" | "MainContent" | "Help" >("Introduction")
   const [startTime, setStartTime] = useState<number>()
   
   
@@ -151,8 +152,28 @@ export default function MyApp() {
 
   return (
     <div className='page-container'>
-      <div className='top-container'>
-        <div className='maps-container'>   
+      <div className='top-container' style={{ display: showContent === "MainContent" ? "flex" : "none"}}>
+        <div className='maps-container'> 
+          <Button
+            aria-label='Show help section'
+            key='open_help'
+            onClick={() => {
+              setShowContent("Help")
+            }}>
+              <svg  className='help-icon' xmlns="http://www.w3.org/2000/svg" width="35" height="35" 
+                fill="white" viewBox="0 0 24 24" >
+                {/* <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free--> */}
+                <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2m1 16h-2v-2h2zm0-4.34V14h-2v-1c0-.43.27-.8.67-.94.58-.2 2.24-1.03 2.24-2.07 0-.82-.54-1.57-1.32-1.86-1.04-.38-2.28.19-2.65 1.21l-1.88-.68c.75-2.06 3.13-3.16 5.21-2.41 1.56.57 2.62 2.07 2.64 3.73 0 1.98-1.87 3.17-2.91 3.68"></path>
+            </svg> 
+          </Button> 
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{
+                borderColor: '#9ca3af',
+                margin: '10px 10px',
+              }}
+            />
             <Tabs 
               className= "navigation-tabs"
               value = {activeMapButton} 
@@ -258,6 +279,33 @@ export default function MyApp() {
               borderColor: "#646973",
               "&:hover": {
                 borderColor: "#646973",
+                backgroundColor: "#green"
+              },
+              "&:active": {
+                borderColor: "#646973",
+                backgroundColor: "#green"
+              }
+            }}
+            >Start
+          </Button>
+        </div>
+        <div className='help' style={{ display: showContent === "Help" || showContent === "Introduction" ? "block" : "none"}}>
+          <h1>Help</h1>
+          <HelpSection/>
+          <Button 
+            key='close_help'
+            aria-label='close help section'
+            variant="outlined"
+            onClick={() => {
+              setShowContent("MainContent")
+            }}
+            sx= {{
+              display: showContent === "Help" ? "inline" : "none",
+              margin: 2,
+              color: "white",
+              borderColor: "#646973",
+              "&:hover": {
+                borderColor: "#646973",
                 backgroundColor: "green"
               },
               "&:active": {
@@ -265,9 +313,10 @@ export default function MyApp() {
                 backgroundColor: "green"
               }
             }}
-            >Start
-          </Button>
+            >Close</Button>
+
         </div>
+
         <div className='main-content' style={{ display: showContent === "MainContent" ? "block" : "none"}}>
           <Stack direction= "row" spacing={2} 
             sx= {{
@@ -429,7 +478,7 @@ export default function MyApp() {
               backgroundColor: "green"
             }
           }}
-          >Submit</Button>
+          >Finish</Button>
         </div>
       </div>
     </div>

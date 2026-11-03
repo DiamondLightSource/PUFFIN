@@ -26,6 +26,44 @@ export type MapName = "eventmap_thumbnail" | "mtz_thumbnail" | "fofc_thumbnail" 
 type MapGif = "eventmap_gif" | "mtz_gif" | "fofc_gif" | "overlay_eventmap_fofc_gif" | "clash_gif" | "eventmap_contour_gif" | "mtz_contour_gif" | "clash_contour_gif" | "no_gif"
 
 
+export function getScoreSvg(scoreType : string, activeStatus : boolean) {
+    let colour = "white"
+    if (activeStatus === false){
+      if (scoreType === "good") {
+        colour = "#4cbb17"
+      } else if (scoreType === "ok") {
+        colour = "orange"
+      } else {
+        colour = "#ff2800"
+      }
+    }
+
+     if (scoreType === "good") {
+      return  <svg  className = "warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
+                fill={colour} viewBox="0 0 24 24" >
+                {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
+                <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2m-1.29 13.71c-.2.2-.45.29-.71.29s-.51-.1-.71-.29l-3-3L7.7 11.3l2.29 2.29 5.29-5.29 1.41 1.41-6 6Z"></path>
+              </svg>
+    } else if (scoreType === "ok") {
+      return <svg  className = "warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
+                fill={colour} viewBox="0 0 24 24" >
+                {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
+                <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2m5 11H7v-2h10z"></path>
+              </svg>
+    } else {
+      return <svg  className = "warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
+              fill={colour} viewBox="0 0 24 24" >
+              {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
+              <path d="M19.07 19.07c3.9-3.9 3.9-10.24 0-14.14C17.18 3.04 14.67 2 12 2S6.82 3.04 4.93 4.93c-3.9 3.9-3.9 10.24 0 14.14 1.95 1.95 4.51 2.92 7.07 2.92s5.12-.98 7.07-2.92M7.76 14.83 10.59 12 7.76 9.17l1.41-1.41L12 10.59l2.83-2.83 1.41 1.41L13.41 12l2.83 2.83-1.41 1.41L12 13.41l-2.83 2.83z"></path>
+            </svg>
+    }
+
+  }
+
+
+
+
+
 function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setActiveThumbnails, activeActivityButton, decisionButton, decision} : ThumbnailProps){
 
   const toggleThumbnail = (id: string) => {
@@ -148,43 +186,6 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
 
 
 
-
-  const scoreSvg = (scoreType : string, activeStatus : boolean) => {
-    let colour = "white"
-    if (activeStatus === false){
-      if (scoreType === "good") {
-        colour = "#4cbb17"
-      } else if (scoreType === "ok") {
-        colour = "orange"
-      } else {
-        colour = "#ff2800"
-      }
-    }
-
-     if (scoreType === "good") {
-      return  <svg  className = "warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
-                fill={colour} viewBox="0 0 24 24" >
-                {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
-                <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2m-1.29 13.71c-.2.2-.45.29-.71.29s-.51-.1-.71-.29l-3-3L7.7 11.3l2.29 2.29 5.29-5.29 1.41 1.41-6 6Z"></path>
-              </svg>
-    } else if (scoreType === "ok") {
-      return <svg  className = "warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
-                fill={colour} viewBox="0 0 24 24" >
-                {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
-                <path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2m5 11H7v-2h10z"></path>
-              </svg>
-    } else {
-      return <svg  className = "warning-label" xmlns="http://www.w3.org/2000/svg" width="16" height="16"  
-              fill={colour} viewBox="0 0 24 24" >
-              {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
-              <path d="M19.07 19.07c3.9-3.9 3.9-10.24 0-14.14C17.18 3.04 14.67 2 12 2S6.82 3.04 4.93 4.93c-3.9 3.9-3.9 10.24 0 14.14 1.95 1.95 4.51 2.92 7.07 2.92s5.12-.98 7.07-2.92M7.76 14.83 10.59 12 7.76 9.17l1.41-1.41L12 10.59l2.83-2.83 1.41 1.41L13.41 12l2.83 2.83-1.41 1.41L12 13.41l-2.83 2.83z"></path>
-            </svg>
-    }
-
-  }
-
-
-
     return thumbnailData
     .filter(thumbnail => siteID === "All" || thumbnail.site_idx === siteID)
     .filter(thumbnail => 
@@ -200,11 +201,11 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
         className={`card ${activeThumbnails.includes(thumbnail.id) ? "active" : ""}`} onClick={() => toggleThumbnail(thumbnail.id)}>
           <div className='thumbnail-images'>
             { thumbnail[activeGif] && (
-            <svg  className="play-button" xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
-              fill="#000000" viewBox="0 0 24 24" >
-              {/* Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free */}
-              <path d="M6.51 18.87c.15.09.32.13.49.13s.36-.05.51-.14l10-6c.3-.18.49-.51.49-.86s-.18-.68-.49-.86l-10-6a.99.99 0 0 0-1.01-.01c-.31.18-.51.51-.51.87v12c0 .36.19.69.51.87Z"></path>
-            </svg> )}
+              <svg  className='play-button' xmlns="http://www.w3.org/2000/svg" width="20" height="20"  
+              fill="black" viewBox="0 0 24 24" >
+              {/* <!--Boxicons v3.0.8 https://boxicons.com | License  https://docs.boxicons.com/free--> */}
+              <path d="M4 20h12c1.1 0 2-.9 2-2v-4.33L22 17V7l-4 3.33V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2"></path>
+              </svg> )}
           <img 
               tabIndex={0}
               src= {thumbnailSrc} 
@@ -214,10 +215,10 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
               onFocus={gifSrc ? (e) => {e.currentTarget.src = gifSrc;}: undefined}
               onBlur={(e) => {e.currentTarget.src = thumbnailSrc;}}
               style={{
-              width: "200px"
+              width: "300px"
               }}/>
             </div>
-            <h3>{thumbnail.dtag} #{thumbnail.event_idx} </h3>
+            <h2>{thumbnail.dtag} #{thumbnail.event_idx} </h2>
         <div className="statistics">
 
             { thumbnail["clash_status"] && ( <div className='clash-warning'>
@@ -230,28 +231,28 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
             </div> )}
             <div className="row">
               <div className='score-info'>
-                {thumbnail.event_score >= 0.9 ? scoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) :
-                  (thumbnail.event_score >= 0.8 && thumbnail.event_score < 0.9) ? scoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) :
-                  scoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
+                {thumbnail.event_score >= 0.9 ? getScoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) :
+                  (thumbnail.event_score >= 0.8 && thumbnail.event_score < 0.9) ? getScoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) :
+                  getScoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
                 {/* eventScoreSvg(thumbnail.event_score, activeThumbnails.includes(thumbnail.id) ? true : false) */}
                 <p><b>Event:</b> {Math.round(thumbnail.event_score * 100) / 100}</p>
               </div>
               <div className='score-info'>
-                {thumbnail.build_score > 0.9 ? scoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) : 
-                (thumbnail.build_score > 0.8 && thumbnail.build_score <= 0.9) ? scoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) :
-                  scoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
+                {thumbnail.build_score > 0.9 ? getScoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) : 
+                (thumbnail.build_score > 0.8 && thumbnail.build_score <= 0.9) ? getScoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) :
+                  getScoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
                 <p><b>Build:</b> {Math.round(thumbnail.build_score * 100) / 100}</p>
               </div>
             </div>
             <div className="row">
               <div className='score-info'>
-                {scoreSvg(getRfreeRworkStatus(thumbnail.r_work, thumbnail.r_free, thumbnail.analysed_resolution), activeThumbnails.includes(thumbnail.id) ? true : false)}
+                {getScoreSvg(getRfreeRworkStatus(thumbnail.r_work, thumbnail.r_free, thumbnail.analysed_resolution), activeThumbnails.includes(thumbnail.id) ? true : false)}
                 <p><b>rw/rf:</b> {thumbnail.r_work}/{thumbnail.r_free}</p>
               </div>
               <div className="score-info">
-                {thumbnail.analysed_resolution < 2.5 ? scoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) : 
-                (thumbnail.analysed_resolution >= 2.5 && thumbnail.analysed_resolution < 3)? scoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) : 
-                scoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
+                {thumbnail.analysed_resolution < 2.5 ? getScoreSvg("good", activeThumbnails.includes(thumbnail.id) ? true : false) : 
+                (thumbnail.analysed_resolution >= 2.5 && thumbnail.analysed_resolution < 3)? getScoreSvg("ok", activeThumbnails.includes(thumbnail.id) ? true : false) : 
+                getScoreSvg("bad", activeThumbnails.includes(thumbnail.id) ? true : false)}
                 <p><b>Res.:</b> {thumbnail.analysed_resolution}</p>
               </div>
             </div>
