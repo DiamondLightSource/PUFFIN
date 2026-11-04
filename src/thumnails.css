@@ -98,6 +98,10 @@
     padding-top: calc(var(--options-height) + var(--options-padding-bottom));
     background-color: #16171d;
     color: #9ca3af;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .thumbnail-images {
@@ -183,6 +187,14 @@ p {
     fill: #4cbb17;
 }
 
+.help {
+    display: flex;
+    max-width: 1200px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .MuiAccordion-root {
     background-color: #16171d !important;
     color: white !important;
@@ -219,4 +231,11 @@ p {
 
 .MuiTypography-root {
     max-width: 800px;
+}
+
+.introduction {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }

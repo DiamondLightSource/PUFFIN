@@ -8,7 +8,7 @@ import type {MapName} from './thumbnail'
 import thumbnail_data from './assets/northern_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Divider, Button, Stack, Pagination } from '@mui/material'
+import { Divider, Button, Stack, Pagination, Typography } from '@mui/material'
 
 
 
@@ -265,7 +265,18 @@ export default function MyApp() {
         </div>
       </div>
       <div className='main-container'>
-        <div className='introduction' style={{ display: showContent === "Introduction" ? "block" : "none"}}>
+        <div className='introduction' style={{ display: showContent === "Introduction" ? "flex" : "none"}}>
+          <h1>Welcome</h1>
+          <Typography sx={{mb: 5}}>
+            This App is being developed as a proof-of-concept for an approach to quickly triage fragment hits. 
+            Future development will include integration of Moorhen to enable deeper inspection of hits after triage.
+          </Typography>
+
+          <Typography className='get-started' sx={{fontWeight: "bold"}}>
+            When ready please click the start button below and analyse the fragment hits. When finished please click the Finish button. 
+            Thank you for participating &#128516;
+          </Typography>
+
           <Button
             key='start-app'
             variant="outlined"
@@ -289,7 +300,7 @@ export default function MyApp() {
             >Start
           </Button>
         </div>
-        <div className='help' style={{ display: showContent === "Help" || showContent === "Introduction" ? "block" : "none"}}>
+        <div className='help' style={{ display: showContent === "Help" || showContent === "Introduction" ? "flex" : "none"}}>
           <h1>Help</h1>
           <HelpSection/>
           <Button 
@@ -300,7 +311,7 @@ export default function MyApp() {
               setShowContent("MainContent")
             }}
             sx= {{
-              display: showContent === "Help" ? "inline" : "none",
+              display: showContent === "Help" ? "flex" : "none",
               margin: 2,
               color: "white",
               borderColor: "#646973",
