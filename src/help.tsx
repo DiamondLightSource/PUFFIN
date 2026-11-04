@@ -37,10 +37,11 @@ function createRfreeRworkScoreData(
     return {scoreRating, rfreeGoodRes, rfreeOkRes, rfreeBadRes, rworkGoodRes, rworkOkRes, rworkBadRes};
 }
 
+
 const basicScoreBreakdown = [
     createBasicTableData("good", "\u2265 0.9", "\u003E 0.9", "\u003C 2.5", "Rwork, Rfree and Rwork - Rfree all have Good ratings", "\u2264 0.05"),
-    createBasicTableData("ok", "\u2265 0.8 - 0.9", "\u003E 0.8", "\u2265 2.5 - 3", "Any of Rwork, Rfree and Rwork - Rfree have OK rating", "0.05 - 0.08"),
-    createBasicTableData("bad", "\u003C 0.8", "\u2264 0.8", "\u2265 3", "Any of Rwork, Rfree and Rwork - Rfree have Bad rating", "\u003E 0.08")
+    createBasicTableData("ok", "\u2265 0.8 - 0.9", "\u003E 0.8", "\u2265 2.5 - 3", "Any of Rwork, Rfree and Rwork - Rfree have an OK rating", "0.05 - 0.08"),
+    createBasicTableData("bad", "\u003C 0.8", "\u2264 0.8", "\u2265 3", "Any of Rwork, Rfree and Rwork - Rfree have a Bad rating", "\u003E 0.08")
 ]
 
 const rfreeRworkScoreBreakdown = [
@@ -56,7 +57,7 @@ export default function HelpSection() {
     <div>
         <Accordion>
         <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
+          expandIcon={<ArrowDropDownIcon sx={{color: "white"}}/>}
           aria-controls={`${id}-panel1-content`}
           id={`${id}-panel1-header`}
         >
@@ -80,7 +81,7 @@ export default function HelpSection() {
       </Accordion>
       <Accordion>
         <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
+          expandIcon={<ArrowDropDownIcon  sx={{color: "white"}}/>}
           aria-controls={`${id}-panel2-content`}
           id={`${id}-panel1-header`}
         >
@@ -116,7 +117,7 @@ export default function HelpSection() {
       </Accordion>
       <Accordion>
         <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
+          expandIcon={<ArrowDropDownIcon  sx={{color: "white"}}/>}
           aria-controls={`${id}-panel3-content`}
           id={`${id}-panel3-header`}
         >
@@ -152,7 +153,7 @@ export default function HelpSection() {
       </Accordion>
       <Accordion>
         <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
+          expandIcon={<ArrowDropDownIcon  sx={{color: "white"}}/>}
           aria-controls={`${id}-panel4-content`}
           id={`${id}-panel4-header`}
         >
@@ -177,7 +178,7 @@ export default function HelpSection() {
       </Accordion>
       <Accordion>
         <AccordionSummary
-          expandIcon={<ArrowDropDownIcon />}
+          expandIcon={<ArrowDropDownIcon  sx={{color: "white"}}/>}
           aria-controls={`${id}-panel5-content`}
           id={`${id}-panel5-header`}
         >
@@ -225,7 +226,7 @@ export default function HelpSection() {
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
                         <TableRow>
-                            <TableCell></TableCell>
+                            <TableCell sx={{borderRight: 2, borderColor: "divider"}}></TableCell>
                             <TableCell colSpan={3} sx={{borderRight: 2, borderColor: "divider"}} align="center">Rwork</TableCell>
                             <TableCell colSpan={3} align="center">Rfree</TableCell>
                         </TableRow>
@@ -235,7 +236,7 @@ export default function HelpSection() {
                                 <TableRow
                                 key={row.scoreRating}
                                 >
-                                <TableCell component="th" scope="row">
+                                <TableCell component="th" scope="row" sx={{borderRight: 2, borderColor: "divider"}}>
                                     {row.scoreRating !== "" ? getScoreSvg(row.scoreRating, false) : "Resolution (\u00C5)"}
                                 </TableCell>
                                 <TableCell align="right">{row.rworkGoodRes}</TableCell>
