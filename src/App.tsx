@@ -71,7 +71,7 @@ export default function MyApp() {
   const [analysisTime, setAnalysisTime] = useState<number>()
   const [formData, setFormData] = useState({
   "years-experience": "No experience",
-  "usefulness": null,
+  "usefulness": "Neutral",
   "missing": null,
   "general-feedback": null
 });
@@ -84,16 +84,34 @@ export default function MyApp() {
 
 
   const validateFormField = (e) => {
-      if (e.target.name === "missing" || "general-feedback") {
+    const validExperience = [
+      "No experience", "Less than a year", "1 - 2 years",
+      "3 - 5 years", "More than 5 years"
+    ]
+
+    const validUsefulness = [
+      "Strongly agree", "Agree", "Neutral", "Disagree", "Strongly disagree"
+    ]
+      if (e.target.name === "missing" || e.target.name === "general-feedback") {
           if (e.target.value.length < 2000 && validateTextField(e.target.value) === true) {
               return true
           } else {
               return false
           }
+
+      } else if (e.target.name === "usefulness"){
+          return validUsefulness.includes(e.target.value)
+          
+      } else if (e.target.name === "years-experience") {
+          return validExperience.includes(e.target.value)
+
       } else {
-          return true
-      } 
+          return false
+      }
   }
+
+
+
 
   const handleChange = (e) => {
     const updatedForm= {
@@ -142,7 +160,7 @@ export default function MyApp() {
     setDecision({});
     setFormData({
       "years-experience": "No experience",
-      "usefulness": null,
+      "usefulness": "Neutral",
       "general-feedback": null,
       "missing": null})
 
@@ -163,16 +181,8 @@ export default function MyApp() {
     setShowContent("Feedback")
   }
   
-  const handleFormSubmit = (formName) => {
-    // console.log('formName:', formName)
-    // if (formName != null) {
-    //   decision["FormData"] = formName
-    // } else {
-    //   decision["FormData"] = null
-    // }
-    
+  const handleFormSubmit = () => {
     handleReset()
-    console.log('Form values:', formName);
   };
 
 
@@ -444,7 +454,6 @@ export default function MyApp() {
               key="reset"
               className='main-button'
               variant="outlined"
-              // onClick={() => handleReset()}
               sx= {{
                 width: 'auto', 
                 color: "white",

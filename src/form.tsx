@@ -32,7 +32,7 @@ export function FeedbackForm({onSubmit, formData, setFormData, handleChange}) {
                     <TextField 
                       id="usefulness" 
                       name='usefulness' 
-                      value={formData["usefulness"] ?? ""} 
+                      value={formData["usefulness"] ?? "Neutral"} 
                       sx = {{width: '25ch'}}
                       select 
                       onChange={handleChange}>
