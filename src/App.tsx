@@ -140,12 +140,17 @@ export default function MyApp() {
     setSiteID("All");
     setActiveThumbnails([]);
     setDecision({});
+    setFormData({
+      "years-experience": "No experience",
+      "usefulness": null,
+      "general-feedback": null,
+      "missing": null})
 
     
     if (analysisTime != null) {
-      downloadDecisionJSON(Math.floor((analysisTime) / 1000));
+      downloadDecisionJSON(Math.floor((analysisTime) / 1000), formData);
     } else {
-      downloadDecisionJSON(null)
+      downloadDecisionJSON(null, formData)
     }
     
     setShowContent("Introduction")
@@ -159,12 +164,12 @@ export default function MyApp() {
   }
   
   const handleFormSubmit = (formName) => {
-    console.log('formName:', formName)
-    if (formName != null) {
-      decision["FormData"] = formName
-    } else {
-      decision["FormData"] = null
-    }
+    // console.log('formName:', formName)
+    // if (formName != null) {
+    //   decision["FormData"] = formName
+    // } else {
+    //   decision["FormData"] = null
+    // }
     
     handleReset()
     console.log('Form values:', formName);
@@ -200,11 +205,16 @@ export default function MyApp() {
     title = `Site ${siteID}`;
   }
 
-  const downloadDecisionJSON = (totalTime) => {
-    decision["Time"] = totalTime;
+  const downloadDecisionJSON = (totalTime, formData) => {
+    const jsonData = {
+      ...decision,
+      "formData": formData,
+      "Time": totalTime 
+    }
+    // decision["Time"] = totalTime;
     const blob = new Blob(
-      [JSON.stringify(decision, null, 2)],
-      { type: "application/json" }
+      [JSON.stringify(jsonData, null, 2)],
+      { type: "application/json;charset=utf-8" }
     );
 
     const url = URL.createObjectURL(blob);

@@ -58,11 +58,9 @@ export function FeedbackForm({onSubmit, formData, setFormData, handleChange}) {
                     slotProps={{htmlInput: {
                         maxLength: 2000}
                     }}
-                    // value={formName}
                     onChange={handleChange}
-                    //   color='warning'
                     variant='outlined'
-                    //   defaultValue="Hello World"
+                    value={formData["missing"] ?? ""}
                     />
                 </div>
                     <div className='form-div'>
@@ -79,11 +77,9 @@ export function FeedbackForm({onSubmit, formData, setFormData, handleChange}) {
                     slotProps={{htmlInput: {
                         maxLength: 2000}
                     }}
-                    // value={formName}
                     onChange={handleChange}
-                    //   color='warning'
                     variant='outlined'
-                    //   defaultValue="Hello World"
+                    value={formData["general-feedback"] ?? ""}
                     />
                 </div>
             </div>
