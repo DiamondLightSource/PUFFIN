@@ -55,6 +55,7 @@
     border-radius: 10px;
     color: #FFFFFF;
     border: 1px solid #646973;
+    align-self: flex-start;
 }
 
 .active {
@@ -238,4 +239,78 @@ p {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+}
+
+.form-div {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    text-align: left;
+    /* justify-items: center; */
+}
+
+.user-feedback {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.form-label {
+    color: white;
+}
+
+/* Text entered into the field */
+.MuiInputBase-input {
+    color: white !important;
+}
+
+/* TextField background */
+.MuiOutlinedInput-root {
+    background-color: #252630;
+}
+
+/* Border around the field */
+.user-feedback .MuiOutlinedInput-notchedOutline {
+    border-color: #777 !important;
+}
+
+/* Border when hovering */
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+    border-color: #4cbb17 !important;
+}
+
+/* Border when selected/focused */
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+    border-color: white !important;
+}
+
+/* Label colour */
+.MuiInputLabel-root {
+    color: #ccc !important;
+}
+
+/* Label when focused */
+.MuiInputLabel-root.Mui-focused {
+    color: white !important;
+}
+
+.MuiMenu-paper {
+    background-color: #252630 !important;
+    color: white !important;
+}
+
+.MuiMenuItem-root {
+    color: white !important;
+}
+
+.MuiMenuItem-root:hover {
+    background-color: #3a3b48 !important;
+}
+
+.MuiMenuItem-root.Mui-selected {
+    background-color: #454658 !important;
+}
+
+.MuiSelect-icon {
+    color: white !important;
 }

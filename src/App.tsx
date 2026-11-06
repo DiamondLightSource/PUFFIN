@@ -9,6 +9,10 @@ import thumbnail_data from './assets/northern_mappings.json'
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { Divider, Button, Stack, Pagination, Typography } from '@mui/material'
+import { FeedbackForm } from './form';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
 
 
 
@@ -62,10 +66,53 @@ export default function MyApp() {
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
   const [decisionButton, setDecisionButton] = useState<DecisionLabels | "All">("All")
   const [showDiv, setShowDiv] = useState<"All" | "Site" | "Reviewed">("All")
-  const [showContent, setShowContent] = useState<"Introduction" | "MainContent" | "Help" >("Introduction")
+  const [showContent, setShowContent] = useState<"Introduction" | "MainContent" | "Help" | "Feedback">("Introduction")
   const [startTime, setStartTime] = useState<number>()
+  const [analysisTime, setAnalysisTime] = useState<number>()
+  const [formData, setFormData] = useState({
+  "years-experience": "No experience",
+  "usefulness": null,
+  "missing": null,
+  "general-feedback": null
+});
+
   
-  
+  const validateTextField = (value) => {
+    const regex = /^[\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n]*$/u;
+    return regex.test(value);
+  };
+
+
+  const validateFormField = (e) => {
+      if (e.target.name === "missing" || "general-feedback") {
+          if (e.target.value.length < 2000 && validateTextField(e.target.value) === true) {
+              return true
+          } else {
+              return false
+          }
+      } else {
+          return true
+      } 
+  }
+
+  const handleChange = (e) => {
+    const updatedForm= {
+        ...formData,
+        [e.target.name]: e.target.value
+    };
+
+    if (!e.target.name) {
+        console.warn("Form field is missing a name attribute:", e.target);
+        return;
+    }
+    
+    if (validateFormField(e) === true){
+        setFormData(updatedForm);
+    }
+
+    return;
+
+  };
 
   const applyDecision = (decision: DecisionLabels, activeThumbnailsArray: string[]) => {
     setDecision(previous => {
@@ -93,15 +140,36 @@ export default function MyApp() {
     setSiteID("All");
     setActiveThumbnails([]);
     setDecision({});
+
     
-    if (startTime != null) {
-      downloadDecisionJSON(Math.floor((Date.now() - startTime) / 1000));
+    if (analysisTime != null) {
+      downloadDecisionJSON(Math.floor((analysisTime) / 1000));
     } else {
       downloadDecisionJSON(null)
     }
     
     setShowContent("Introduction")
+  };
+
+  const handleTransition = () => {
+    if (startTime != null) {
+      setAnalysisTime(Date.now() - startTime)
+    }
+    setShowContent("Feedback")
   }
+  
+  const handleFormSubmit = (formName) => {
+    console.log('formName:', formName)
+    if (formName != null) {
+      decision["FormData"] = formName
+    } else {
+      decision["FormData"] = null
+    }
+    
+    handleReset()
+    console.log('Form values:', formName);
+  };
+
 
   const handleBulkSelection = (buttonValue : string, thumbnailData : Thumbnail[]) => {
     if (buttonValue === 'selectAll') {
@@ -269,13 +337,40 @@ export default function MyApp() {
           <h1>Welcome</h1>
           <Typography sx={{mb: 5}}>
             This App is being developed as a proof-of-concept for an approach to quickly triage fragment hits. 
-            Future development will include integration of Moorhen to enable deeper inspection of hits after triage.
+            Future development will include integration of Moorhen to enable deeper inspection of hits following triage.
           </Typography>
 
-          <Typography className='get-started' sx={{fontWeight: "bold"}}>
-            When ready please click the start button below and analyse the fragment hits. When finished please click the Finish button. 
+          <Typography className='get-started' sx={{fontWeight: "bold", mb: 8}}>
+            When ready please add your crystallography experience level and click the Start button below to analyse the fragment hits. When finished please click the Finish button, fill in the survey and click Submit. 
             Thank you for participating &#128516;
           </Typography>
+          <Box>
+            <div className='form-div'>
+              <label htmlFor='years-experience' className='form-label'>
+                  I have been working in crystallography for:
+              </label>
+              <TextField 
+                id="years-experience" 
+                name='years-experience' 
+                fullWidth
+                slotProps={{
+                  htmlInput: {
+                    form: 'feedback-form'
+                  }
+                }}
+                sx={{mb: 3}}
+                value={formData["years-experience"] ?? "No experience"} 
+                select 
+                onChange={handleChange}>
+                  <MenuItem value="No experience">No experience</MenuItem>
+                  <MenuItem value="Less than a year">Less than a year</MenuItem>
+                  <MenuItem value="1 - 2 years">1 - 2 years</MenuItem>
+                  <MenuItem value="3 - 5 years">3 - 5 years</MenuItem>
+                  <MenuItem value="More than 5 years">More than 5 years</MenuItem>
+              </TextField>
+
+            </div>
+          </Box>
 
           <Button
             key='start-app'
@@ -290,11 +385,11 @@ export default function MyApp() {
               borderColor: "#646973",
               "&:hover": {
                 borderColor: "#646973",
-                backgroundColor: "#green"
+                backgroundColor: "green"
               },
               "&:active": {
                 borderColor: "#646973",
-                backgroundColor: "#green"
+                backgroundColor: "green"
               }
             }}
             >Start
@@ -326,6 +421,34 @@ export default function MyApp() {
             }}
             >Close</Button>
 
+        </div>
+
+        <div className='user-feedback' style={{display: showContent === "Feedback" ? "flex" :"none"}}>
+            <h1>Feedback</h1>
+            <Typography sx={{mb: 5}}>
+              Please complete the form below and click Submit to submit the results of the fragment analysis. Thank you for participating &#128516;
+            </Typography>
+            <FeedbackForm onSubmit={handleFormSubmit} formData={formData} setFormData={setFormData} handleChange={handleChange}/>
+            <Button
+              form="feedback-form"
+              key="reset"
+              className='main-button'
+              variant="outlined"
+              // onClick={() => handleReset()}
+              sx= {{
+                width: 'auto', 
+                color: "white",
+                borderColor: "#646973",
+                "&:hover": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                },
+                "&:active": {
+                  borderColor: "#646973",
+                  backgroundColor: "green"
+                }
+              }}
+              type='submit'>Submit</Button>
         </div>
 
         <div className='main-content' style={{ display: showContent === "MainContent" ? "block" : "none"}}>
@@ -476,7 +599,7 @@ export default function MyApp() {
           key="reset"
           // className='main-button'
           variant="outlined"
-          onClick={() => handleReset()}
+          onClick={() => handleTransition()}
           sx= {{
             color: "white",
             borderColor: "#646973",
