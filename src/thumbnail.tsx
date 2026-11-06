@@ -1,5 +1,5 @@
 // import thumbnail_data from './assets/mapping.json'
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { Thumbnail } from "./types";
 import type {SiteID, DecisionLabels, ThumbnailActivityLabels} from "./App";
 
@@ -12,7 +12,10 @@ interface ThumbnailProps {
   setActiveThumbnails: React.Dispatch<React.SetStateAction<string[]>>;
   activeActivityButton: ThumbnailActivityLabels;
   decision: Decision;
-  decisionButton: DecisionLabels | "All"
+  decisionButton: DecisionLabels | "All";
+  startGifTimer: (activeGif: string) => void;
+  finishGifTimer: (activeGif: string) => void;
+  updateGifCounts: (activeGif: string) => void;
 }
 
 
@@ -64,8 +67,7 @@ export function getScoreSvg(scoreType : string, activeStatus : boolean) {
 
 
 
-function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setActiveThumbnails, activeActivityButton, decisionButton, decision} : ThumbnailProps){
-
+function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setActiveThumbnails, activeActivityButton, decisionButton, decision, startGifTimer, finishGifTimer, updateGifCounts} : ThumbnailProps){
   const toggleThumbnail = (id: string) => {
     setActiveThumbnails(previous => {
       if (previous.includes(id)) {
@@ -210,8 +212,15 @@ function ThumbnailCard({mapName, thumbnailData, siteID, activeThumbnails, setAct
               tabIndex={0}
               src= {thumbnailSrc} 
               alt = {`${getReadableMapName(mapName)} for ${thumbnail.dtag} event ${thumbnail.event_idx}`}
-              onMouseEnter={gifSrc ? (e) => {e.currentTarget.src = gifSrc;}: undefined}
-              onMouseOut={(e) => {e.currentTarget.src = thumbnailSrc;}} 
+              onMouseEnter={gifSrc ? (e) => {
+                e.currentTarget.src = gifSrc;
+                startGifTimer(activeGif)
+                updateGifCounts(activeGif)
+              }: undefined}
+              onMouseOut={(e) => {
+                e.currentTarget.src = thumbnailSrc;
+                finishGifTimer(activeGif)
+              }} 
               onFocus={gifSrc ? (e) => {e.currentTarget.src = gifSrc;}: undefined}
               onBlur={(e) => {e.currentTarget.src = thumbnailSrc;}}
               style={{

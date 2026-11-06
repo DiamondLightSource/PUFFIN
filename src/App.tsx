@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
 import './thumnails.css'
 import type { Thumbnail } from "./types";
@@ -69,14 +69,136 @@ export default function MyApp() {
   const [showContent, setShowContent] = useState<"Introduction" | "MainContent" | "Help" | "Feedback">("Introduction")
   const [startTime, setStartTime] = useState<number>()
   const [analysisTime, setAnalysisTime] = useState<number>()
-  const [formData, setFormData] = useState({
-  "years-experience": "No experience",
-  "usefulness": "Neutral",
-  "missing": null,
-  "general-feedback": null
-});
+  const mapStartTime = useRef<number | null>(null)
+  const gifStartTime = useRef<number | null>(null)
+  const [gifViewTimes, setGifViewTimes] = useState({
+    "eventmap_gif": 0, 
+    "mtz_gif": 0, 
+    "fofc_gif": 0, 
+    "overlay_eventmap_fofc_gif": 0, 
+    "clash_gif": 0, 
+    "eventmap_contour_gif": 0, 
+    "mtz_contour_gif": 0, 
+    "clash_contour_gif": 0,
+    "no_gif": 0
+  })
 
+  const [gifViewCounts, setGifViewCounts] = useState({
+    "eventmap_gif": 0, 
+    "mtz_gif": 0, 
+    "fofc_gif": 0, 
+    "overlay_eventmap_fofc_gif": 0, 
+    "clash_gif": 0, 
+    "eventmap_contour_gif": 0, 
+    "mtz_contour_gif": 0, 
+    "clash_contour_gif": 0,
+    "no_gif": 0
+  })
+  const [formData, setFormData] = useState({
+    "years-experience": "No experience",
+    "usefulness": "Neutral",
+    "missing": null,
+    "general-feedback": null
+  });
+  const [viewTimes, setViewTimes] = useState({
+    "eventmap_thumbnail" : 0,
+    "mtz_thumbnail" : 0,
+    "fofc_thumbnail" : 0,
+    "overlay_eventmap_fofc_thumbnail" : 0,
+    "clash_thumbnail" : 0
+  })
+  const [mapCounts, setMapCounts] = useState({
+    "eventmap_thumbnail" : 1,
+    "mtz_thumbnail" : 0,
+    "fofc_thumbnail" : 0,
+    "overlay_eventmap_fofc_thumbnail" : 0,
+    "clash_thumbnail" : 0
+  })
   
+  const startGifTimer = (activeGif: string) => {
+    // Finish timing the previous view
+    if (gifStartTime.current !== null) {
+
+      const elapsed = Date.now() - gifStartTime.current;
+
+      setGifViewTimes(prev => ({
+        ...prev,
+        [activeGif]:
+          prev[activeGif] + elapsed
+      }));
+    }
+
+    // Start timing the new view
+    gifStartTime.current = Date.now();
+  }
+  
+  
+  const finishGifTimer = (activeGif: string) => {
+
+    if (gifStartTime.current !== null) {
+
+      const elapsed = Date.now() - gifStartTime.current;
+
+      setGifViewTimes(prev => ({
+        ...prev,
+        [activeGif]:
+          prev[activeGif] + elapsed
+      }));
+
+      gifStartTime.current = null;
+    }
+  };
+    
+  const updateGifCounts = (activeGif: string) => {
+    setGifViewCounts(prev => ({
+      ...prev,
+      [activeGif]: (prev[activeGif] ?? 0) + 1
+    }))
+  }
+
+
+  const startMapTimer = () => {
+    // Finish timing the previous view
+    if (mapStartTime.current !== null) {
+
+      const elapsed = Date.now() - mapStartTime.current;
+
+      setViewTimes(prev => ({
+        ...prev,
+        [activeMapButton]:
+          prev[activeMapButton] + elapsed
+      }));
+    }
+
+    // Start timing the new view
+    mapStartTime.current = Date.now();
+  }
+
+
+  const finishMapTimer = () => {
+
+    if (mapStartTime.current !== null) {
+
+      const elapsed = Date.now() - mapStartTime.current;
+
+      setViewTimes(prev => ({
+        ...prev,
+        [activeMapButton]:
+          prev[activeMapButton] + elapsed
+      }));
+
+      mapStartTime.current = null;
+    }
+  };
+  
+  const updateMapCounts = (activeMap: string) => {
+    setMapCounts(prev => ({
+      ...prev,
+      [activeMap]: (prev[activeMap] ?? 0) + 1
+    }))
+  }
+
+
   const validateTextField = (value) => {
     const regex = /^[\p{L}\p{N}\p{P}\p{Z}\p{S}\r\n]*$/u;
     return regex.test(value);
@@ -109,9 +231,6 @@ export default function MyApp() {
           return false
       }
   }
-
-
-
 
   const handleChange = (e) => {
     const updatedForm= {
@@ -152,6 +271,14 @@ export default function MyApp() {
   };
 
   const handleReset = () => {
+    if (analysisTime != null) {
+        downloadDecisionJSON(analysisTime, formData, viewTimes, mapCounts, gifViewTimes, gifViewCounts);
+      } else {
+        downloadDecisionJSON(null, formData, viewTimes, mapCounts, gifViewTimes, gifViewCounts)
+      }
+      
+      setShowContent("Introduction")
+    
     setShowDiv("All")
     setDecisionButton("All");
     // setActiveIDButton("All");
@@ -163,27 +290,55 @@ export default function MyApp() {
       "usefulness": "Neutral",
       "general-feedback": null,
       "missing": null})
-
-    
-    if (analysisTime != null) {
-      downloadDecisionJSON(Math.floor((analysisTime) / 1000), formData);
-    } else {
-      downloadDecisionJSON(null, formData)
-    }
-    
-    setShowContent("Introduction")
+    setMapCounts({
+      "eventmap_thumbnail" : 1,
+      "mtz_thumbnail" : 0,
+      "fofc_thumbnail" : 0,
+      "overlay_eventmap_fofc_thumbnail" : 0,
+      "clash_thumbnail" : 0
+    })
+    mapStartTime.current = null
+    setViewTimes({
+      "eventmap_thumbnail" : 0,
+      "mtz_thumbnail" : 0,
+      "fofc_thumbnail" : 0,
+      "overlay_eventmap_fofc_thumbnail" : 0,
+      "clash_thumbnail" : 0
+    })
+    setGifViewTimes({
+      "eventmap_gif": 0, 
+      "mtz_gif": 0, 
+      "fofc_gif": 0, 
+      "overlay_eventmap_fofc_gif": 0, 
+      "clash_gif": 0, 
+      "eventmap_contour_gif": 0, 
+      "mtz_contour_gif": 0, 
+      "clash_contour_gif": 0,
+      "no_gif": 0
+    })
+    setGifViewCounts({
+      "eventmap_gif": 0, 
+      "mtz_gif": 0, 
+      "fofc_gif": 0, 
+      "overlay_eventmap_fofc_gif": 0, 
+      "clash_gif": 0, 
+      "eventmap_contour_gif": 0, 
+      "mtz_contour_gif": 0, 
+      "clash_contour_gif": 0,
+      "no_gif": 0
+    })
   };
-
+      
   const handleTransition = () => {
     if (startTime != null) {
       setAnalysisTime(Date.now() - startTime)
     }
     setShowContent("Feedback")
   }
-  
-  const handleFormSubmit = () => {
-    handleReset()
-  };
+
+    const handleFormSubmit = () => {
+      handleReset()
+    };
 
 
   const handleBulkSelection = (buttonValue : string, thumbnailData : Thumbnail[]) => {
@@ -215,13 +370,28 @@ export default function MyApp() {
     title = `Site ${siteID}`;
   }
 
-  const downloadDecisionJSON = (totalTime, formData) => {
+  const downloadDecisionJSON = (totalTime, formData, mapTimes, mapCounts, gifViewTimes, gifViewCounts) => {
+    // const mapTimesAsSeconds = Object.fromEntries(
+    //   Object.entries(mapTimes).map(([key, value]) => [
+    //     key,
+    //     Math.round(value/1000)
+    //   ])
+    // );
+
+    // console.log(mapTimes)
+    // console.log(Object.entries(mapTimes))
+    // console.log(mapTimesAsSeconds)
+
     const jsonData = {
       ...decision,
       "formData": formData,
-      "Time": totalTime 
+      "Time": totalTime,
+      "mapTimes" : mapTimes,
+      "mapCounts" : mapCounts,
+      "gifTimes" : gifViewTimes,
+      "gifCounts": gifViewCounts 
     }
-    // decision["Time"] = totalTime;
+
     const blob = new Blob(
       [JSON.stringify(jsonData, null, 2)],
       { type: "application/json;charset=utf-8" }
@@ -266,8 +436,10 @@ export default function MyApp() {
               className= "navigation-tabs"
               value = {activeMapButton} 
               onChange={(event, newMap) => {
+                    startMapTimer()
                     setMapName(newMap)
                     setActiveMapButton(newMap)
+                    updateMapCounts(newMap)
                   }} 
               aria-label="Available maps"
               >
@@ -397,6 +569,7 @@ export default function MyApp() {
             variant="outlined"
             onClick={() => {
               setStartTime(Date.now())
+              startMapTimer()
               setShowContent("MainContent")
             }}
             sx= {{
@@ -612,13 +785,19 @@ export default function MyApp() {
             setActiveThumbnails={setActiveThumbnails}
             activeActivityButton={activeActivityButton}
             decision={decision}
-            decisionButton={decisionButton}/>
+            decisionButton={decisionButton}
+            startGifTimer={startGifTimer}
+            finishGifTimer={finishGifTimer}
+            updateGifCounts={updateGifCounts}
+            />
           </div>      
           <Button
           key="reset"
           // className='main-button'
           variant="outlined"
-          onClick={() => handleTransition()}
+          onClick={() => {
+            finishMapTimer()
+            handleTransition()}}
           sx= {{
             color: "white",
             borderColor: "#646973",
