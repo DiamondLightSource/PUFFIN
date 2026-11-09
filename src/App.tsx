@@ -64,6 +64,7 @@ export default function MyApp() {
   const [activeActivityButton, setActiveActivityButton] = useState<ThumbnailActivityLabels>("Contour")
   const [activeThumbnails, setActiveThumbnails] = useState<string[]>([]);
   const [decision, setDecision] = useState<Record<string, DecisionLabels>>({})
+  const [decisionTimes, setDecisionTimes] = useState<Record<string, number[]>>({})
   const [decisionButton, setDecisionButton] = useState<DecisionLabels | "All">("All")
   const [showDiv, setShowDiv] = useState<"All" | "Site" | "Reviewed">("All")
   const [showContent, setShowContent] = useState<"Introduction" | "MainContent" | "Help" | "Feedback">("Introduction")
@@ -96,7 +97,14 @@ export default function MyApp() {
   })
   const [formData, setFormData] = useState({
     "years-experience": "No experience",
+    "fragment-experience": "No experience",
     "usefulness": "Neutral",
+    "projects": "Neutral",
+    "project-examples": null,
+    "confidence": "Neutral",
+    "confidence-details": null,
+    "usage": "Neutral",
+    "usage-details": null,
     "missing": null,
     "general-feedback": null
   });
@@ -214,22 +222,23 @@ export default function MyApp() {
     const validUsefulness = [
       "Strongly agree", "Agree", "Neutral", "Disagree", "Strongly disagree"
     ]
-      if (e.target.name === "missing" || e.target.name === "general-feedback") {
-          if (e.target.value.length < 2000 && validateTextField(e.target.value) === true) {
-              return true
-          } else {
-              return false
-          }
 
-      } else if (e.target.name === "usefulness"){
-          return validUsefulness.includes(e.target.value)
-          
-      } else if (e.target.name === "years-experience") {
-          return validExperience.includes(e.target.value)
+    if (e.target.name === "missing" || e.target.name === "general-feedback" || e.target.name === "project-examples" || e.target.name === "confidence-details" || e.target.name === "usage-details") {
+        if (e.target.value.length < 2000 && validateTextField(e.target.value) === true) {
+            return true
+        } else {
+            return false
+        }
 
-      } else {
-          return false
-      }
+    } else if (e.target.name === "usefulness" || e.target.name === "projects" || e.target.name === "confidence" || e.target.name === "usage"){
+        return validUsefulness.includes(e.target.value)
+        
+    } else if (e.target.name === "years-experience" || e.target.name === "fragment-experience") {
+        return validExperience.includes(e.target.value)
+
+    } else {
+        return false
+    }
   }
 
   const handleChange = (e) => {
@@ -263,18 +272,34 @@ export default function MyApp() {
     });
   };
 
+  const applyDecisionTimes = (activeThumbnailsArray: string[]) => {
+    setDecisionTimes(previous => {
+      const updatedTimes = { ...previous };
+
+      activeThumbnailsArray.forEach(id => {
+        updatedTimes[id] = [
+          ...(updatedTimes[id] || []),
+          Date.now()
+        ];
+      });
+
+      return updatedTimes;
+    });
+  };
+
 
   const handleDecisions = (decision: DecisionLabels) => {
     const currentSelectedThumbnails = activeThumbnails;
     applyDecision(decision, currentSelectedThumbnails);
+    applyDecisionTimes(currentSelectedThumbnails);
     setActiveThumbnails([]);
   };
 
   const handleReset = () => {
     if (analysisTime != null) {
-        downloadDecisionJSON(analysisTime, formData, viewTimes, mapCounts, gifViewTimes, gifViewCounts);
+        downloadDecisionJSON(analysisTime, formData, viewTimes, mapCounts, gifViewTimes, gifViewCounts, decisionTimes);
       } else {
-        downloadDecisionJSON(null, formData, viewTimes, mapCounts, gifViewTimes, gifViewCounts)
+        downloadDecisionJSON(null, formData, viewTimes, mapCounts, gifViewTimes, gifViewCounts, decisionTimes)
       }
       
       setShowContent("Introduction")
@@ -285,11 +310,20 @@ export default function MyApp() {
     setSiteID("All");
     setActiveThumbnails([]);
     setDecision({});
+    setDecisionTimes({});
     setFormData({
       "years-experience": "No experience",
+      "fragment-experience": "No experience",
       "usefulness": "Neutral",
       "general-feedback": null,
-      "missing": null})
+      "missing": null, 
+      "projects": "Neutral",
+      "project-examples": null,
+      "confidence": "Neutral",
+      "confidence-details": null,
+      "usage": "Neutral",
+      "usage-details": null
+    })
     setMapCounts({
       "eventmap_thumbnail" : 1,
       "mtz_thumbnail" : 0,
@@ -370,17 +404,7 @@ export default function MyApp() {
     title = `Site ${siteID}`;
   }
 
-  const downloadDecisionJSON = (totalTime, formData, mapTimes, mapCounts, gifViewTimes, gifViewCounts) => {
-    // const mapTimesAsSeconds = Object.fromEntries(
-    //   Object.entries(mapTimes).map(([key, value]) => [
-    //     key,
-    //     Math.round(value/1000)
-    //   ])
-    // );
-
-    // console.log(mapTimes)
-    // console.log(Object.entries(mapTimes))
-    // console.log(mapTimesAsSeconds)
+  const downloadDecisionJSON = (totalTime, formData, mapTimes, mapCounts, gifViewTimes, gifViewCounts, decisionTimes) => {
 
     const jsonData = {
       ...decision,
@@ -389,7 +413,8 @@ export default function MyApp() {
       "mapTimes" : mapTimes,
       "mapCounts" : mapCounts,
       "gifTimes" : gifViewTimes,
-      "gifCounts": gifViewCounts 
+      "gifCounts": gifViewCounts,
+      "decisionTimes": decisionTimes 
     }
 
     const blob = new Blob(
@@ -526,67 +551,98 @@ export default function MyApp() {
       </div>
       <div className='main-container'>
         <div className='introduction' style={{ display: showContent === "Introduction" ? "flex" : "none"}}>
-          <h1>Welcome</h1>
-          <Typography sx={{mb: 5}}>
-            This App is being developed as a proof-of-concept for an approach to quickly triage fragment hits. 
-            Future development will include integration of Moorhen to enable deeper inspection of hits following triage.
-          </Typography>
+          <div className='intro-welcome'>
+            <h1>Welcome</h1>
+            <Typography sx={{mb: 5}}>
+              This App is being developed as a proof-of-concept for an approach to quickly triage fragment hits. 
+              Future development will include integration of Moorhen to enable deeper inspection of hits following triage.
+            </Typography>
 
-          <Typography className='get-started' sx={{fontWeight: "bold", mb: 8}}>
-            When ready please add your crystallography experience level and click the Start button below to analyse the fragment hits. When finished please click the Finish button, fill in the survey and click Submit. 
-            Thank you for participating &#128516;
-          </Typography>
-          <Box>
-            <div className='form-div'>
-              <label htmlFor='years-experience' className='form-label'>
-                  I have been working in crystallography for:
-              </label>
-              <TextField 
-                id="years-experience" 
-                name='years-experience' 
-                fullWidth
-                slotProps={{
-                  htmlInput: {
-                    form: 'feedback-form'
-                  }
-                }}
-                sx={{mb: 3}}
-                value={formData["years-experience"] ?? "No experience"} 
-                select 
-                onChange={handleChange}>
-                  <MenuItem value="No experience">No experience</MenuItem>
-                  <MenuItem value="Less than a year">Less than a year</MenuItem>
-                  <MenuItem value="1 - 2 years">1 - 2 years</MenuItem>
-                  <MenuItem value="3 - 5 years">3 - 5 years</MenuItem>
-                  <MenuItem value="More than 5 years">More than 5 years</MenuItem>
-              </TextField>
+            <Typography className='get-started' sx={{mb: 8}}>
+              It is recommended to briefly review the Help section to understand how to use the tool before beginning.  <strong>When ready please 
+                add your experience level and click the Start button below to analyse the fragment hits. When finished please click the Finish button, fill in the survey and click Submit. 
+              Thank you for participating &#128516;</strong>
+            </Typography>
+          </div>
+          <div className='intro-form'>
+            <Box>
+              <div className='form-div'>
+                <label htmlFor='years-experience' className='form-label'>
+                    Crystallography experience:
+                </label>
+                <TextField 
+                  id="years-experience" 
+                  name='years-experience' 
+                  fullWidth
+                  slotProps={{
+                    htmlInput: {
+                      form: 'feedback-form'
+                    }
+                  }}
+                  sx={{mb: 3}}
+                  value={formData["years-experience"] ?? "No experience"} 
+                  select 
+                  onChange={handleChange}>
+                    <MenuItem value="No experience">No experience</MenuItem>
+                    <MenuItem value="Less than a year">Less than a year</MenuItem>
+                    <MenuItem value="1 - 2 years">1 - 2 years</MenuItem>
+                    <MenuItem value="3 - 5 years">3 - 5 years</MenuItem>
+                    <MenuItem value="More than 5 years">More than 5 years</MenuItem>
+                </TextField>
 
-            </div>
-          </Box>
+              </div>
+                <div className='form-div'>
+                <label htmlFor='fragment-experience' className='form-label'>
+                    Fragment screening experience:
+                </label>
+                <TextField 
+                  id="fragment-experience" 
+                  name='fragment-experience' 
+                  fullWidth
+                  slotProps={{
+                    htmlInput: {
+                      form: 'feedback-form'
+                    }
+                  }}
+                  sx={{mb: 3}}
+                  value={formData["fragment-experience"] ?? "No experience"} 
+                  select 
+                  onChange={handleChange}>
+                    <MenuItem value="No experience">No experience</MenuItem>
+                    <MenuItem value="Less than a year">Less than a year</MenuItem>
+                    <MenuItem value="1 - 2 years">1 - 2 years</MenuItem>
+                    <MenuItem value="3 - 5 years">3 - 5 years</MenuItem>
+                    <MenuItem value="More than 5 years">More than 5 years</MenuItem>
+                </TextField>
 
-          <Button
-            key='start-app'
-            variant="outlined"
-            onClick={() => {
-              setStartTime(Date.now())
-              startMapTimer()
-              setShowContent("MainContent")
-            }}
-            sx= {{
-              margin: 2,
-              color: "white",
-              borderColor: "#646973",
-              "&:hover": {
-                borderColor: "#646973",
-                backgroundColor: "green"
-              },
-              "&:active": {
-                borderColor: "#646973",
-                backgroundColor: "green"
-              }
-            }}
-            >Start
-          </Button>
+                <Button
+                  key='start-app'
+                  variant="outlined"
+                  onClick={() => {
+                    setStartTime(Date.now())
+                    startMapTimer()
+                    setShowContent("MainContent")
+                  }}
+                  sx= {{
+                    margin: 2,
+                    color: "white",
+                    backgroundColor: "green",
+                    borderColor: "#646973",
+                    "&:hover": {
+                      borderColor: "#646973",
+                      backgroundColor: "#4cbb17"
+                    },
+                    "&:active": {
+                      borderColor: "#646973",
+                      backgroundColor: "green"
+                    }
+                  }}
+                  >Start
+                </Button>
+
+              </div>
+            </Box>
+          </div>
         </div>
         <div className='help' style={{ display: showContent === "Help" || showContent === "Introduction" ? "flex" : "none"}}>
           <h1>Help</h1>
@@ -655,7 +711,6 @@ export default function MyApp() {
               variant={showDiv === "All" ? "contained" : "outlined"}
               onClick={() => {
                 setShowDiv("All")
-                // setActiveIDButton("All")
                 setSiteID("All")
                 setDecisionButton("All")
               }}
@@ -752,7 +807,6 @@ export default function MyApp() {
                 {buttonList.map(buttonName => (
                   <Button 
                   key={`${buttonName}_review`}
-                  // className={`main-button ${decisionButton === buttonName ? "active" : ""}`} 
                   variant={decisionButton === buttonName ? "contained" : "outlined"}
                   onClick={() => {
                     setDecisionButton(buttonName)
@@ -790,7 +844,8 @@ export default function MyApp() {
             finishGifTimer={finishGifTimer}
             updateGifCounts={updateGifCounts}
             />
-          </div>      
+          </div> 
+          { Object.keys(decision).length === Object.keys(thumbnailData).length &&     
           <Button
           key="reset"
           // className='main-button'
@@ -810,7 +865,7 @@ export default function MyApp() {
               backgroundColor: "green"
             }
           }}
-          >Finish</Button>
+          >Finish</Button> }
         </div>
       </div>
     </div>
