@@ -236,9 +236,14 @@ p {
 
 .introduction {
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
-    flex-direction: column;
+    /* flex-direction: column; */
+}
+.intro-welcome {
+    text-align: left;
+    max-width: 650px;
+    padding-right: 150px;
 }
 
 .form-div {
