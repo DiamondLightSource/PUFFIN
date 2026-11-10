@@ -12,6 +12,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { getScoreSvg } from './thumbnail';
+import pageOverview from './assets/help/page_overview.png';
+import menuOptions from './assets/help/menu_options.png';
+import navigationAll from './assets/help/navigation_all.png';
+import navigationSites from './assets/help/navigation_sites.png';
+import navigationDecision from './assets/help/navigation_decision.png';
+import thumbnailSchematic from './assets/help/thumbnail_schematic.png';
 
 
 function createBasicTableData(
@@ -66,7 +72,7 @@ export default function HelpSection() {
         <AccordionDetails>
             <div className='flex-accordion-content'>
                 <img
-                    src = "src/assets/help/page_overview.png"
+                    src = {pageOverview}
                     style={{width: "500px"}} />
                 <Typography component="div" variant="body1">
                     <ul>
@@ -89,7 +95,7 @@ export default function HelpSection() {
         </AccordionSummary>
         <AccordionDetails>
             <img
-                src = "src/assets/help/menu_options.png"
+                src = {menuOptions}
                 style={{width: "1000px"}} />
             <Typography component="div" variant="body1">
                 <ul>
@@ -126,7 +132,7 @@ export default function HelpSection() {
         <AccordionDetails>
             <div className='flex-accordion-content multicontent'>
                 <img
-                    src = "src/assets/help/navigation_all.png"
+                    src = {navigationAll}
                     style={{width: "700px"}} />
                 <Typography>
                     Shows all fragment cards that have not been assigned a decision (yes, review, no).
@@ -134,7 +140,7 @@ export default function HelpSection() {
             </div>
             <div className='flex-accordion-content multicontent'>
                 <img
-                    src = "src/assets/help/navigation_sites.png"
+                    src = {navigationSites}
                     style={{width: "700px"}} />
                 <Typography>
                     Shows all fragment cards within a site as identified by PanDDA2 that have not been assigned a decision (yes, review, no). Use the numbered buttons to change between sites.
@@ -142,7 +148,7 @@ export default function HelpSection() {
             </div>
             <div className='flex-accordion-content multicontent'>
                 <img
-                    src = "src/assets/help/navigation_decision.png"
+                    src = {navigationDecision}
                     style={{width: "700px"}} />
                 <Typography>
                     Shows all fragment cards assigned to a selected decision (in this example, shows fragment cards that have been assigned as Review). 
@@ -162,7 +168,7 @@ export default function HelpSection() {
         <AccordionDetails>
             <div className='flex-accordion-content'>
                 <img
-                    src = "src/assets/help/thumbnail_schematic.png"
+                    src = {thumbnailSchematic}
                     style={{width: "500px"}} />
                 <Typography variant="body1" component="div">
                     <ul>
